@@ -10,7 +10,7 @@ html,
 body {
   height: 100%;
   overflow-x: hidden;
-  cursor: none;        /* native cursor hidden — CustomCursor takes over */
+  cursor: auto;        /* native cursor visible alongside ship overlay */
 }
 
 body {
@@ -20,9 +20,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-* {
-  cursor: none;
-}
 
 a {
   color: inherit;

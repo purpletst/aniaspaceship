@@ -6,6 +6,13 @@ import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Order, OrderStatus, Profile } from '@/lib/types';
 import styles from './mypage.module.css';
 
+function formatMobile(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: '입금전',
   confirmed: '배송준비중',
@@ -152,7 +159,15 @@ export default function MyPageClient({ email, orders, profile }: MyPageClientPro
             </div>
             <div className={styles.field}>
               <label className={styles.label}>휴대전화</label>
-              <input className={styles.input} value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="010-0000-0000" />
+              <input
+                className={styles.input}
+                type="tel"
+                inputMode="numeric"
+                value={mobile}
+                onChange={(e) => setMobile(formatMobile(e.target.value))}
+                placeholder="010-0000-0000"
+                maxLength={13}
+              />
             </div>
             {saveMsg && <p className={styles.saveMsg}>{saveMsg}</p>}
             <button className={styles.saveBtn} onClick={saveProfile} disabled={saving}>

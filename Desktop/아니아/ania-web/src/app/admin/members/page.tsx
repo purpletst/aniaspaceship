@@ -34,7 +34,10 @@ export default async function AdminMembersPage() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>회원 관리</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+        <h1 className={styles.title}>회원 관리</h1>
+        <a href="/admin/products" style={{ fontFamily: 'Tahoma,sans-serif', fontSize: '9.5px', color: '#555', textDecoration: 'underline' }}>상품 관리</a>
+      </div>
       <p className={styles.count}>총 {users.length}명</p>
 
       <table className={styles.table}>

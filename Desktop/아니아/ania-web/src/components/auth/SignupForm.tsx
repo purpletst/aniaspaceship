@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import styles from './SignupForm.module.css';
@@ -20,8 +19,14 @@ interface DaumPostcodeResult {
   jibunAddress: string;
 }
 
+function formatMobile(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
 export default function SignupForm() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -35,6 +40,7 @@ export default function SignupForm() {
   const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   const addressDetailRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +53,10 @@ export default function SignupForm() {
         addressDetailRef.current?.focus();
       },
     }).open();
+  }
+
+  function handleMobile(e: React.ChangeEvent<HTMLInputElement>) {
+    setMobile(formatMobile(e.target.value));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -66,28 +76,45 @@ export default function SignupForm() {
     const supabase = getSupabaseBrowserClient();
 
     const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-    if (signUpError || !data.user) {
-      setError(signUpError?.message ?? '회원가입 중 오류가 발생했습니다.');
+
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
       return;
     }
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      name,
-      mobile,
-      postal_code: postalCode,
-      address,
-      address_detail: addressDetail,
-    });
-
-    if (profileError) {
-      setError('프로필 저장 중 오류가 발생했습니다.');
-      setLoading(false);
-      return;
+    // data.user can be null when email confirmation is required — that's OK
+    const userId = data.user?.id;
+    if (userId) {
+      // profiles insert: best-effort — don't block signup if table missing
+      await supabase.from('profiles').insert({
+        id: userId,
+        name,
+        mobile,
+        postal_code: postalCode,
+        address,
+        address_detail: addressDetail,
+      });
     }
 
-    router.push('/');
+    setLoading(false);
+    setDone(true);
+  }
+
+  if (done) {
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.doneBox}>
+          <p className={styles.doneIcon}>👾</p>
+          <h1 className={styles.doneTitle}>가입이 완료되었습니다!</h1>
+          <p className={styles.doneSub}>
+            이메일 확인 메일을 보냈어요.<br />
+            메일함에서 링크를 클릭한 후 로그인해 주세요.
+          </p>
+          <a href="/login" className={styles.doneBtn}>로그인하러 가기</a>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -148,9 +175,11 @@ export default function SignupForm() {
               <input
                 className={styles.input}
                 type="tel"
+                inputMode="numeric"
                 value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={handleMobile}
                 placeholder="010-0000-0000"
+                maxLength={13}
               />
             </div>
           </section>

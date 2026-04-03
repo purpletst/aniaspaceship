@@ -1,61 +1,24 @@
-/* ============================================================
-   Custom Cursor
-   Both elements are fixed at top:0 left:0 and moved via
-   transform: translate(x, y) to avoid layout reflow.
-   pointer-events: none keeps them from blocking clicks.
-   ============================================================ */
-
-/* Main cursor — ania ship PNG */
 .ship {
   position: fixed;
   top: 0;
   left: 0;
-  width: 64px;         /* display width — aspect 397:244 → ~39px tall */
-  height: auto;
+  width: 64px;
+  aspect-ratio: 397 / 244;
   background-image: url('/assets/cursor.png');
   background-size: contain;
   background-repeat: no-repeat;
   pointer-events: none;
   z-index: 999999;
   will-change: transform;
-  opacity: 0;           /* hidden until first mousemove */
-  aspect-ratio: 397 / 244;
-  /* Hotspot offset: ship nose is roughly left-center, so shift left by half-width */
+  opacity: 0;
+  /* Hotspot: ship nose — offset so pointer tip lines up with native cursor */
   margin-left: -12px;
   margin-top: -8px;
+  transition: filter 0.15s, scale 0.15s;
 }
 
-/* On interactive elements: scale up slightly */
+/* On interactive elements: glow */
 .ship.pointer {
-  filter: brightness(1.15) drop-shadow(0 0 6px rgba(80, 180, 255, 0.7));
-  transform-origin: center center;
-  scale: 1.15;
-}
-
-/* Follower — ania character */
-.follower {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 999998;
-  will-change: transform;
-  opacity: 0;
-}
-
-.followerImg {
-  width: 44px;
-  height: auto;
-  display: block;
-  /* Offset: character appears to the right + slightly below the cursor */
-  transform: translate(36px, 4px);
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.22));
-  transition: opacity 0.2s, transform 0.2s;
-  user-select: none;
-}
-
-/* On interactive elements: character peeks up */
-.follower.pointerFollower .followerImg {
-  transform: translate(36px, -8px);
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(80, 200, 255, 0.8));
+  scale: 1.12;
 }
