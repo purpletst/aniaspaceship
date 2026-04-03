@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import NavWrapper from '@/components/nav/NavWrapper';
 import LogoBar from '@/components/logo/LogoBar';
+import CursorLoader from '@/components/cursor/CursorLoader';
 
 export const metadata: Metadata = {
   title: '아니아 — 26FW',
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
+        <CursorLoader />
         <NavWrapper />
         <LogoBar />
         {children}

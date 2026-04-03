@@ -53,7 +53,8 @@ export default function XpPopup({ onClose }: XpPopupProps) {
               <span className={styles.lineWarn}>⚠ 시스템 알림 / SYSTEM ALERT</span>
               <span className={styles.lineMain}>
                 절대 바이러스 아닙니다.<br />
-                제발 믿어주세요... 전 아니아입니다.
+                제발 믿어주세요...<br />
+                전 아니아입니다.
               </span>
               <span className={styles.lineSub}>
                 👽 지구인으로 살아남기 가이드<br />

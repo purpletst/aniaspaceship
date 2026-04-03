@@ -2,17 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { siteConfig } from '@/lib/siteConfig';
 import styles from './HamburgerMenu.module.css';
 
 interface HamburgerMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onSearchClick: () => void;
 }
 
-const SHOP_SUB = ['ALL', 'OUTERWEAR', 'TOPS', 'BOTTOMS', 'DRESSES', 'ACCESSORIES'] as const;
-
-export default function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
+export default function HamburgerMenu({ isOpen, onClose, onSearchClick }: HamburgerMenuProps) {
   const [shopOpen, setShopOpen] = useState(true);
+  const { hamburger } = siteConfig;
 
   return (
     <div
@@ -35,14 +36,10 @@ export default function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
           </button>
           {shopOpen && (
             <ul className={styles.subList}>
-              {SHOP_SUB.map((cat) => (
-                <li key={cat}>
-                  <Link
-                    href={cat === 'ALL' ? '/shop' : `/shop?category=${cat.toLowerCase()}`}
-                    className={styles.subItem}
-                    onClick={onClose}
-                  >
-                    {cat}
+              {hamburger.shopSubs.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className={styles.subItem} onClick={onClose}>
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -50,27 +47,36 @@ export default function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
           )}
         </div>
 
-        {/* Other top-level items */}
-        {(['SS', 'HOUSE', 'COLLECTION', 'STOCKIST'] as const).map((item) => (
-          <Link key={item} href="#" className={styles.menuItem} onClick={onClose}>
-            {item}
+        {/* Top-level items */}
+        {hamburger.topItems.map((item) => (
+          <Link key={item.label} href={item.href} className={styles.menuItem} onClick={onClose}>
+            {item.label}
           </Link>
         ))}
 
         <hr className={styles.divider} />
 
-        <Link href="#" className={styles.menuItem} onClick={onClose}>CONTACT</Link>
-        <Link href="#" className={styles.menuItem} onClick={onClose}>INSTAGRAM</Link>
+        {hamburger.bottomItems.map((item) => (
+          <Link key={item.label} href={item.href} className={styles.menuItem} onClick={onClose}>
+            {item.label}
+          </Link>
+        ))}
 
         <hr className={styles.divider} />
 
-        <Link href="/login" className={styles.menuItem} onClick={onClose}>로그인</Link>
-        <Link href="/signup" className={styles.menuItem} onClick={onClose}>회원가입</Link>
-        <Link href="/mypage" className={styles.menuItem} onClick={onClose}>마이페이지</Link>
+        <Link href="/login"   className={styles.menuItem} onClick={onClose}>로그인</Link>
+        <Link href="/signup"  className={styles.menuItem} onClick={onClose}>회원가입</Link>
+        <Link href="/mypage"  className={styles.menuItem} onClick={onClose}>마이페이지</Link>
 
         <hr className={styles.divider} />
 
-        <Link href="#" className={styles.menuItem} onClick={onClose}>SEARCH</Link>
+        <button
+          className={styles.menuItem}
+          onClick={() => { onClose(); onSearchClick(); }}
+          style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', padding: 0 }}
+        >
+          SEARCH
+        </button>
       </nav>
     </div>
   );

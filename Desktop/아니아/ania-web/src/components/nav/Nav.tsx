@@ -1,25 +1,39 @@
+'use client';
+
 import Link from 'next/link';
+import { siteConfig } from '@/lib/siteConfig';
 import styles from './Nav.module.css';
 
 interface NavProps {
   onHamburgerClick: () => void;
+  onSearchClick: () => void;
 }
 
-export default function Nav({ onHamburgerClick }: NavProps) {
+export default function Nav({ onHamburgerClick, onSearchClick }: NavProps) {
+  const { nav } = siteConfig;
+
   return (
-    <nav className={styles.nav}>
+    <nav
+      className={styles.nav}
+      style={{ background: nav.background, color: nav.foreground, height: nav.height }}
+    >
       <ul className={styles.navLeft}>
-        <li><Link href="/shop">SHOP</Link></li>
-        <li><Link href="/shop?category=tops">SS</Link></li>
-        <li><Link href="#">HOUSE</Link></li>
-        <li><Link href="#">COLLECTION</Link></li>
-        <li><Link href="#">STOCKIST</Link></li>
-        <li><Link href="#">SEARCH</Link></li>
+        {nav.links.map((link) => (
+          <li key={link.label}>
+            <Link href={link.href}>{link.label}</Link>
+          </li>
+        ))}
+        <li>
+          <button className={styles.searchBtn} onClick={onSearchClick}>
+            SEARCH
+          </button>
+        </li>
       </ul>
 
       <div className={styles.navRight}>
-        <Link href="/mypage">MYPAGE</Link>
-        <Link href="#">BAG (0)</Link>
+        {nav.rightLinks.map((link) => (
+          <Link key={link.label} href={link.href}>{link.label}</Link>
+        ))}
         <button
           className={styles.hamburger}
           onClick={onHamburgerClick}

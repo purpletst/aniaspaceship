@@ -10,7 +10,7 @@ html,
 body {
   height: 100%;
   overflow-x: hidden;
-  cursor: url('/assets/cursor.png') 0 0, auto;
+  cursor: none;        /* native cursor hidden — CustomCursor takes over */
 }
 
 body {
@@ -21,7 +21,7 @@ body {
 }
 
 * {
-  cursor: inherit;
+  cursor: none;
 }
 
 a {
