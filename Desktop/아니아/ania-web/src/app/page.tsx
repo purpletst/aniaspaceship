@@ -30,12 +30,17 @@ async function getHomeProducts(): Promise<Product[]> {
   return SEED_PRODUCTS;
 }
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams: Promise<{ nopopup?: string }>;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { nopopup } = await searchParams;
   const products = await getHomeProducts();
 
   return (
     <>
-      <XpPopupWrapper />
+      {!nopopup && <XpPopupWrapper />}
       <main className={styles.split}>
         <HeroPanel />
         <div className={styles.gridPanel}>

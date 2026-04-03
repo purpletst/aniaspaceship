@@ -16,27 +16,26 @@ export function useDraggable() {
     const grip = handle;
 
     let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let originLeft = 0;
-    let originTop = 0;
+    let offsetX = 0;
+    let offsetY = 0;
 
     function onPointerDown(e: PointerEvent) {
       if ((e.target as HTMLElement).closest('[data-no-drag]')) return;
+
+      const rect = el.getBoundingClientRect();
+      // Save where inside the element the pointer landed
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
 
       isDragging = true;
       grip.setPointerCapture(e.pointerId);
       grip.style.cursor = 'grabbing';
 
-      const rect = el.getBoundingClientRect();
-      originLeft = rect.left;
-      originTop = rect.top;
-      startX = e.clientX;
-      startY = e.clientY;
-
+      // Cancel any running CSS animation so its fill-mode doesn't override inline transform
+      el.style.animation = 'none';
       el.style.position = 'fixed';
-      el.style.left = `${originLeft}px`;
-      el.style.top = `${originTop}px`;
+      el.style.left = `${rect.left}px`;
+      el.style.top = `${rect.top}px`;
       el.style.transform = 'none';
       el.style.margin = '0';
       e.preventDefault();
@@ -44,8 +43,8 @@ export function useDraggable() {
 
     function onPointerMove(e: PointerEvent) {
       if (!isDragging) return;
-      el.style.left = `${originLeft + e.clientX - startX}px`;
-      el.style.top = `${originTop + e.clientY - startY}px`;
+      el.style.left = `${e.clientX - offsetX}px`;
+      el.style.top = `${e.clientY - offsetY}px`;
     }
 
     function onPointerUp() {

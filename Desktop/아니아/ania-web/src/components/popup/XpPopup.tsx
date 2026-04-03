@@ -52,15 +52,15 @@ export default function XpPopup({ onClose }: XpPopupProps) {
             <div className={styles.speechBubble}>
               <span className={styles.lineWarn}>⚠ 시스템 알림 / SYSTEM ALERT</span>
               <span className={styles.lineMain}>
-                일단 들어보세요!<br />
-                전 바이러스가 아닙니다!
+                절대 바이러스 아닙니다.<br />
+                제발 믿어주세요... 전 아니아입니다.
               </span>
               <span className={styles.lineSub}>
                 👽 지구인으로 살아남기 가이드<br />
                 GUIDE TO SURVIVING AS AN EARTHLING<br />
                 <br />
                 지구가 어려운 당신. 제가 필요합니다.<br />
-                안내를 원할 시 들어가기를 눌러주세요.
+                안내를 원할 시 설치하기를 눌러주세요.
               </span>
             </div>
           </div>
@@ -69,10 +69,7 @@ export default function XpPopup({ onClose }: XpPopupProps) {
         {/* Footer */}
         <div className={styles.footer}>
           <button className={`${styles.btn} ${styles.primary}`} onClick={onClose}>
-            들어가기 &#9654;
-          </button>
-          <button className={styles.btn} onClick={onClose}>
-            닫기
+            설치하기 &#9654;
           </button>
         </div>
 

@@ -117,6 +117,7 @@
   animation: wobble 3.5s ease-in-out infinite;
   width: 115px;
   height: auto;
+  margin-top: 19px;
 }
 
 @keyframes wobble {

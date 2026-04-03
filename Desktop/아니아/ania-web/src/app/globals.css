@@ -10,6 +10,7 @@ html,
 body {
   height: 100%;
   overflow-x: hidden;
+  cursor: url('/assets/cursor.png') 0 0, auto;
 }
 
 body {
@@ -17,6 +18,10 @@ body {
   background: #fff;
   color: #000;
   -webkit-font-smoothing: antialiased;
+}
+
+* {
+  cursor: inherit;
 }
 
 a {
