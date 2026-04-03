@@ -1,0 +1,184 @@
+.wrapper {
+  max-width: 780px;
+  margin: 60px auto 120px;
+  padding: 0 24px;
+}
+
+.title {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.email {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 36px;
+}
+
+/* Order status bar */
+.statusBar {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.statusItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 8px;
+  border-right: 1px solid #e0e0e0;
+  gap: 6px;
+}
+
+.statusItem:last-child {
+  border-right: none;
+}
+
+.statusCount {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.statusLabel {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #666;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #000;
+  margin-bottom: 32px;
+  gap: 0;
+}
+
+.tab {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: #000;
+}
+
+.tabActive {
+  color: #000;
+  border-bottom-color: #000;
+}
+
+/* Content */
+.content {
+  min-height: 240px;
+}
+
+.empty {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  padding: 60px 0;
+}
+
+/* Order table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+}
+
+.table th {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #888;
+  font-weight: 400;
+  text-align: left;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table td {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+
+/* Edit forms */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  color: #555;
+}
+
+.input {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  border: 1px solid #ccc;
+  padding: 9px 10px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #000;
+}
+
+.saveMsg {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 10px;
+  color: #555;
+}
+
+.saveBtn {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #333;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

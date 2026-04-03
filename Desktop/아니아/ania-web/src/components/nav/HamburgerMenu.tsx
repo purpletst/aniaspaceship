@@ -64,7 +64,9 @@ export default function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
 
         <hr className={styles.divider} />
 
-        <Link href="/login" className={styles.menuItem} onClick={onClose}>로그인 / ACCOUNT</Link>
+        <Link href="/login" className={styles.menuItem} onClick={onClose}>로그인</Link>
+        <Link href="/signup" className={styles.menuItem} onClick={onClose}>회원가입</Link>
+        <Link href="/mypage" className={styles.menuItem} onClick={onClose}>마이페이지</Link>
 
         <hr className={styles.divider} />
 

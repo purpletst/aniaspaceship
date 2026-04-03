@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Product } from '@/lib/types';
 import styles from './AddToCartButton.module.css';
@@ -13,6 +14,7 @@ interface AddToCartButtonProps {
 type State = 'idle' | 'loading' | 'success' | 'error';
 
 export default function AddToCartButton({ product, selectedSize }: AddToCartButtonProps) {
+  const router = useRouter();
   const [state, setState] = useState<State>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -29,8 +31,8 @@ export default function AddToCartButton({ product, selectedSize }: AddToCartButt
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      setErrorMsg('로그인이 필요합니다.');
-      setState('error');
+      router.push(`/login?return=${encodeURIComponent(window.location.pathname)}`);
+      setState('idle');
       return;
     }
 

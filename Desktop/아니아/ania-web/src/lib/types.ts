@@ -53,3 +53,14 @@ export interface Order {
   shipping_address: ShippingAddress | null;
   created_at: string;
 }
+
+export interface Profile {
+  id: string;
+  name: string | null;
+  phone: string | null;
+  mobile: string | null;
+  postal_code: string | null;
+  address: string | null;
+  address_detail: string | null;
+  created_at: string;
+}

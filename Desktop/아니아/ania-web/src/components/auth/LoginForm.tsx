@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import styles from './LoginForm.module.css';
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnPath = searchParams.get('return') ?? '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +26,7 @@ export default function LoginForm() {
       setError('이메일 또는 비밀번호가 올바르지 않습니다.');
       setLoading(false);
     } else {
-      router.push('/');
+      router.push(returnPath);
       router.refresh();
     }
   }
@@ -65,6 +67,9 @@ export default function LoginForm() {
             {loading ? '처리 중...' : '로그인'}
           </button>
         </form>
+        <p className={styles.signupLink}>
+          아직 회원이 아니신가요? <a href="/signup">회원가입</a>
+        </p>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ export default function Nav({ onHamburgerClick }: NavProps) {
       </ul>
 
       <div className={styles.navRight}>
-        <Link href="#">WISHLIST</Link>
+        <Link href="/mypage">MYPAGE</Link>
         <Link href="#">BAG (0)</Link>
         <button
           className={styles.hamburger}
