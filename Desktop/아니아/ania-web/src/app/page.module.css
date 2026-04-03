@@ -1,0 +1,17 @@
+.split {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  height: calc(100vh - 214px); /* nav 38px + logo-bar 176px */
+  overflow: hidden;
+}
+
+.gridPanel {
+  overflow-y: auto;
+}
+
+@media (max-width: 959px) {
+  .split {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}

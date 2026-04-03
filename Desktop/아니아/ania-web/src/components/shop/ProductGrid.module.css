@@ -1,0 +1,24 @@
+.grid {
+  display: grid;
+}
+
+.twoCol {
+  grid-template-columns: 1fr 1fr;
+}
+
+.fourCol {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 959px) {
+  .fourCol {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 639px) {
+  .twoCol,
+  .fourCol {
+    grid-template-columns: 1fr;
+  }
+}

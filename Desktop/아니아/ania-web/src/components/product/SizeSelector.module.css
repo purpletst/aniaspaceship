@@ -1,0 +1,34 @@
+.wrap { margin-bottom: 20px; }
+
+.label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #888;
+  margin-bottom: 8px;
+  font-family: 'Tahoma', sans-serif;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 12px;
+  font-family: 'Tahoma', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn:hover { border-color: #000; }
+
+.selected {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}

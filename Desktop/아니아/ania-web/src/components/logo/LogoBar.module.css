@@ -1,0 +1,13 @@
+.bar {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  padding: 10px 0 6px;
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 176px;
+  width: auto;
+  object-fit: contain;
+}

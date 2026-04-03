@@ -1,0 +1,24 @@
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: 'Tahoma', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover:not(:disabled) { background: #222; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+.loading { opacity: 0.7; }
+
+.error {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #c00;
+  font-family: 'Tahoma', sans-serif;
+}

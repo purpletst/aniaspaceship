@@ -1,0 +1,214 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 36, 106, 0.25);
+  backdrop-filter: blur(3px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayIn 0.25s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.window {
+  width: 460px;
+  background: #ece9d8;
+  border: 2px solid #0a246a;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.8),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.25),
+    4px 4px 16px rgba(0, 0, 0, 0.45);
+  animation: windowPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+  /* centering — overridden to fixed px on first drag */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes windowPop {
+  from { transform: translate(-50%, -50%) scale(0.85) translateY(-24px); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1) translateY(0);        opacity: 1; }
+}
+
+/* Title bar */
+.titlebar {
+  background: linear-gradient(to bottom,
+    #1163af 0%,
+    #3b80ca 8%,
+    #1d67b5 50%,
+    #1558a6 51%,
+    #1a5fa8 100%
+  );
+  height: 30px;
+  padding: 0 4px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  cursor: grab;
+}
+
+.titleLabel {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: 'Tahoma', sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.titleIcon { font-size: 14px; }
+
+.chromeBtns {
+  display: flex;
+  gap: 2px;
+}
+
+.chromeBtn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: 'Tahoma', sans-serif;
+  border-radius: 2px;
+}
+
+.min, .max {
+  background: linear-gradient(to bottom, #cadde8 0%, #8fb3ce 100%);
+  color: #1a3a6a;
+  border: 1px solid #6a98bf;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.close {
+  background: linear-gradient(to bottom, #f1605e 0%, #c52722 100%);
+  color: #fff;
+  border: 1px solid #8b1c1a;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.4);
+  font-weight: bold;
+}
+
+.chromeBtn:hover { filter: brightness(1.12); }
+.chromeBtn:active { filter: brightness(0.9); box-shadow: none; }
+
+/* Body */
+.body {
+  padding: 20px 20px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.character {
+  flex-shrink: 0;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.18));
+  animation: wobble 3.5s ease-in-out infinite;
+  width: 115px;
+  height: auto;
+}
+
+@keyframes wobble {
+  0%,  100% { transform: rotate(0deg) translateY(0); }
+  25%        { transform: rotate(-4deg) translateY(-2px); }
+  75%        { transform: rotate(4deg) translateY(-2px); }
+}
+
+.dialogContent { flex: 1; padding-top: 4px; }
+
+.speechBubble {
+  background: #fff;
+  border: 1.5px solid #0a246a;
+  border-radius: 6px;
+  padding: 14px 16px;
+  line-height: 1.85;
+  font-size: 13.5px;
+  font-family: 'Tahoma', 'Malgun Gothic', sans-serif;
+  position: relative;
+}
+
+.speechBubble::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 24px;
+  border: 8px solid transparent;
+  border-right-color: #0a246a;
+}
+
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 26px;
+  border: 6px solid transparent;
+  border-right-color: #fff;
+}
+
+.lineWarn {
+  font-weight: bold;
+  color: #c00;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.lineMain {
+  font-size: 15px;
+  font-weight: bold;
+  color: #0a246a;
+  line-height: 1.6;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.lineSub {
+  font-size: 12px;
+  color: #444;
+  display: block;
+  border-top: 1px dashed #aaa;
+  padding-top: 8px;
+  line-height: 1.7;
+}
+
+/* Footer */
+.footer {
+  padding: 10px 20px 14px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  border-top: 1px solid #b0a898;
+}
+
+.btn {
+  min-width: 90px;
+  padding: 4px 20px;
+  font-family: 'Tahoma', 'Malgun Gothic', sans-serif;
+  font-size: 12px;
+  background: linear-gradient(to bottom, #f4f2ed 0%, #dbd7cc 100%);
+  border: 1px solid #888;
+  border-bottom-color: #555;
+  border-right-color: #555;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.btn:hover  { background: linear-gradient(to bottom, #faf9f7 0%, #e6e2d9 100%); }
+.btn:active { background: #dbd7cc; box-shadow: none; }
+
+.primary {
+  font-weight: bold;
+  border: 2px solid #0a246a;
+}
