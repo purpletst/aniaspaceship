@@ -6,7 +6,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { overflow-x: hidden; }
-body {}
+
+#header-placeholder { height: 100px; }
 
 body {
   font-family: 'Tahoma', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
@@ -36,8 +37,10 @@ button { font-family: inherit; }
 
 /* ── Unified Site Header ── */
 .site-header {
-  position: sticky;           /* fixed to top on scroll — single declaration, no duplicate */
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   display: flex;
   align-items: center;
