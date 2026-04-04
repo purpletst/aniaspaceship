@@ -8,7 +8,7 @@
   if (!overlay) return;
 
   // Already seen — remove from DOM immediately so it never blocks interaction
-  if (localStorage.getItem('aniaPopupSeen')) {
+  if (sessionStorage.getItem('aniaPopupShown')) {
     overlay.remove();
     return;
   }
@@ -17,8 +17,8 @@
   const bar = document.getElementById('popup-titlebar');
   if (!win || !bar) return;
 
-  // Mark seen before any interaction so back-navigation also skips popup
-  localStorage.setItem('aniaPopupSeen', '1');
+  // Mark shown for this session only (clears when tab/window closes)
+  sessionStorage.setItem('aniaPopupShown', '1');
 
   // Close
   document.querySelectorAll('.popup-close').forEach(btn => {
