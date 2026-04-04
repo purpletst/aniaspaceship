@@ -7,8 +7,9 @@ const SITE = {
   brand: '아니아',
   season: '26 F/W',
   nav: {
-    bg: '#000',
-    // ✏️ 메뉴 항목 편집: label(표시명) + href(링크) 수정
+    bg: '#fff',
+    // ✏️ 메뉴 항목 편집: label에 텍스트 또는 <img> 태그 모두 사용 가능
+    // 아이콘 예시: { label: '<img src="/assets/icons/shop.svg" alt="SHOP" height="16">', href: '/shop.html' }
     links: [
       { label: 'SHOP',       href: '/shop.html' },
       { label: 'COLLECTION', href: '#' },
@@ -34,12 +35,10 @@ const SEED_PRODUCTS = [
   { id:6, name:'GUIDE BOOK',           name_ko:'지구인 가이드',    price:0,      images:['/assets/products/guide-book.png'],           category:'etc',         is_available:0, stock:0  },
 ];
 
-// Helper: format price
 function fmtPrice(n) {
   return Number(n).toLocaleString('ko-KR') + '원';
 }
 
-// Helper: format mobile
 function formatMobile(raw) {
   const d = raw.replace(/\D/g, '').slice(0, 11);
   if (d.length <= 3) return d;
@@ -47,7 +46,6 @@ function formatMobile(raw) {
   return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
 }
 
-// Helper: safe API fetch
 async function apiFetch(url, opts = {}) {
   try {
     const res = await fetch(url, { credentials: 'same-origin', ...opts });

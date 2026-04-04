@@ -1,17 +1,24 @@
 // ─────────────────────────────────────────
 // 아니아 — XP Popup drag + close
+// 표시 조건: localStorage 'aniaPopupSeen' 없을 때만 (브라우저 최초 방문)
+// 로고 클릭 재방문 시 팝업 미표시 (세션/탭 무관)
 // ─────────────────────────────────────────
 (function () {
-  // sessionStorage: show once per browser session, clean URL (no ?nopopup=1)
-  if (sessionStorage.getItem('popupShown')) return;
-
   const overlay = document.getElementById('popup-overlay');
-  const win     = document.getElementById('popup-window');
-  const bar     = document.getElementById('popup-titlebar');
-  if (!overlay || !win || !bar) return;
+  if (!overlay) return;
 
-  // Mark shown immediately so logo-click navigating back won't re-show
-  sessionStorage.setItem('popupShown', '1');
+  // Already seen — remove from DOM immediately so it never blocks interaction
+  if (localStorage.getItem('aniaPopupSeen')) {
+    overlay.remove();
+    return;
+  }
+
+  const win = document.getElementById('popup-window');
+  const bar = document.getElementById('popup-titlebar');
+  if (!win || !bar) return;
+
+  // Mark seen before any interaction so back-navigation also skips popup
+  localStorage.setItem('aniaPopupSeen', '1');
 
   // Close
   document.querySelectorAll('.popup-close').forEach(btn => {
