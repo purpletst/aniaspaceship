@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Collection — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<div class="collection-wrap">
+  <div class="collection-hero">
+    <p class="collection-season">26 F/W — FALL / WINTER 2026</p>
+    <h1 class="collection-title">
+      지구인으로 살아남기<br>
+      <em>GUIDE TO SURVIVING</em><br>
+      <em>AS AN EARTHLING</em>
+    </h1>
+    <p class="collection-sub">
+      낯선 행성에 불시착한 존재처럼, 아니아는 이 세계의 규칙을 거부합니다.<br>
+      26 F/W 컬렉션은 생존과 자유, 그 사이 어딘가를 탐험합니다.
+    </p>
+  </div>
+
+  <div class="collection-cats">
+    <a href="/shop.html?category=outerwear" class="collection-cat-card">
+      <div class="collection-cat-name">OUTERWEAR</div>
+      <div class="collection-cat-ko">아우터웨어</div>
+    </a>
+    <a href="/shop.html?category=tops" class="collection-cat-card">
+      <div class="collection-cat-name">TOPS</div>
+      <div class="collection-cat-ko">탑스</div>
+    </a>
+    <a href="/shop.html?category=bottoms" class="collection-cat-card">
+      <div class="collection-cat-name">BOTTOMS</div>
+      <div class="collection-cat-ko">보텀스</div>
+    </a>
+    <a href="/shop.html?category=dresses" class="collection-cat-card">
+      <div class="collection-cat-name">DRESSES</div>
+      <div class="collection-cat-ko">드레스</div>
+    </a>
+    <a href="/shop.html?category=accessories" class="collection-cat-card">
+      <div class="collection-cat-name">ACCESSORIES</div>
+      <div class="collection-cat-ko">액세서리</div>
+    </a>
+    <a href="/shop.html" class="collection-cat-card">
+      <div class="collection-cat-name">ALL ITEMS</div>
+      <div class="collection-cat-ko">전체 보기</div>
+    </a>
+  </div>
+
+  <!-- 컬렉션 주요 상품 -->
+  <div class="product-grid cols-4" id="collection-grid"></div>
+</div>
+
+<script src="/js/config.js"></script>
+<script>
+(async () => {
+  const grid = document.getElementById('collection-grid');
+  let products = SEED_PRODUCTS.filter(p => p.is_available);
+  const res = await apiFetch(`${API}/products.php?action=list`);
+  if (res.ok && res.data.length) products = res.data.filter(p => p.is_available);
+
+  grid.innerHTML = products.map(p => {
+    const img = (p.images && p.images.length)
+      ? (typeof p.images === 'string' ? JSON.parse(p.images)[0] : p.images[0]) : '';
+    return `<a href="/product.html?id=${p.id}" class="product-card">
+      ${img
+        ? `<img src="${img}" alt="${p.name}" class="product-card-img">`
+        : `<div class="product-card-img placeholder">NO IMAGE</div>`}
+      <div class="product-card-info">
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-name-ko">${p.name_ko || ''}</div>
+        <div class="product-card-price">${fmtPrice(p.price)}</div>
+      </div>
+    </a>`;
+  }).join('');
+})();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+<div id="ship-cursor"></div>
+</body>
+</html>

@@ -48,6 +48,7 @@ async function load() {
           ${SIZES.map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join('')}
         </div>
       ` : ''}
+      ${!sold ? `<button class="cart-btn" id="cart-btn">ADD TO CART</button>` : ''}
       <button class="buy-btn" id="buy-btn" ${sold ? 'disabled' : ''}>${sold ? 'SOLD OUT' : '구매하기'}</button>
       <p class="buy-msg" id="buy-msg"></p>
       ${p.description ? `<p style="margin-top:24px;font-size:11px;line-height:1.8;color:#444">${p.description}</p>` : ''}
@@ -64,6 +65,16 @@ async function load() {
       selectedSize = btn.dataset.size;
     });
   }
+
+  // Cart button
+  document.getElementById('cart-btn')?.addEventListener('click', () => {
+    const msg = document.getElementById('buy-msg');
+    if (!selectedSize) { msg.textContent = '사이즈를 선택해주세요.'; msg.className = 'buy-msg'; return; }
+    const img = (typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []))[0] || '';
+    cartAdd({ id: p.id, name: p.name, name_ko: p.name_ko || '', price: p.price, image: img, size: selectedSize });
+    msg.textContent = '장바구니에 담았습니다.';
+    msg.className = 'buy-msg buy-success';
+  });
 
   // Buy button
   document.getElementById('buy-btn')?.addEventListener('click', handleBuy);

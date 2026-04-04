@@ -5,8 +5,8 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { height: 100%; overflow-x: clip; }
-body { height: 100%; }
+html { overflow-x: hidden; }
+body {}
 
 body {
   font-family: 'Tahoma', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
@@ -231,9 +231,12 @@ button { font-family: inherit; }
 
 /* ── Hero Panel ── */
 .hero-panel {
-  position: relative; overflow: hidden;
+  position: sticky;      /* 좌측 패널: 스크롤 시 뷰포트에 고정 */
+  top: 100px;            /* 헤더 높이 */
+  height: calc(100vh - 100px);
+  align-self: start;     /* CSS grid sticky 필수: stretch 대신 start */
+  overflow: hidden;
   border-right: 1px solid #d8d8d8;
-  /* CSS background replaces <img class="hero-bg"> — viewport-fixed so it doesn't rescale on resize */
   background-color: #b8dbd3;
   background-image: url('/assets/hero-moodboard.png');
   background-attachment: fixed;
@@ -437,10 +440,12 @@ button { font-family: inherit; }
 
 /* ── Responsive ── */
 @media (max-width: 959px) {
-  /* Header: nav links hidden, logo center, user links left, hamburger right */
-  .site-header { padding: 0 20px; position: relative; }
+  /* Header: sticky 유지 (position:relative 제거), 패딩 축소, 모바일 레이아웃 */
+  .site-header { padding: 0 20px; }
+  /* position:sticky는 base CSS에서 유지 — 모바일에서도 헤더 고정 필요 */
   .nav-main-links { display: none; }
   .header-logo-link {
+    /* sticky element는 positioning context → absolute child 가능 */
     position: absolute; left: 50%; top: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
@@ -454,9 +459,75 @@ button { font-family: inherit; }
   .product-detail { grid-template-columns: 1fr; gap: 24px; }
   .modal-grid { grid-template-columns: 1fr; }
 
-  /* iOS Safari: background-attachment:fixed causes glitch — fall back to scroll */
-  .hero-panel { background-attachment: scroll; }
+  /* Hero: 모바일 단일 컬럼에서는 sticky 불필요, 자연 스크롤 */
+  .hero-panel {
+    position: relative;
+    height: auto;
+    min-height: 55vh;
+    background-attachment: scroll;  /* iOS Safari fixed 글리치 방지 */
+  }
 }
 @media (max-width: 480px) {
   .product-grid.cols-2, .product-grid.cols-4 { grid-template-columns: 1fr; }
 }
+
+/* ── Collection page ── */
+.collection-wrap { max-width: 1100px; margin: 60px auto 120px; padding: 0 24px; }
+.collection-hero {
+  text-align: center; border-bottom: 1px solid #000; padding-bottom: 48px; margin-bottom: 60px;
+}
+.collection-season { font-size: 9px; letter-spacing: 0.22em; color: #888; text-transform: uppercase; margin-bottom: 16px; }
+.collection-title  { font-size: 36px; font-weight: 300; letter-spacing: 0.08em; line-height: 1.3; margin-bottom: 20px; }
+.collection-title em { font-style: normal; color: #0a246a; font-weight: 700; }
+.collection-sub    { font-size: 11px; color: #555; line-height: 1.9; max-width: 520px; margin: 0 auto; }
+.collection-cats   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 60px; }
+.collection-cat-card {
+  display: block; text-decoration: none; color: inherit; border: 1px solid #e0e0e0;
+  padding: 36px 24px; text-align: center; transition: border-color 0.2s;
+}
+.collection-cat-card:hover { border-color: #000; }
+.collection-cat-name { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.collection-cat-ko   { font-size: 11px; color: #888; }
+@media (max-width: 959px) { .collection-cats { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px) { .collection-cats { grid-template-columns: 1fr; } }
+
+/* ── About page ── */
+.about-wrap { max-width: 720px; margin: 80px auto 140px; padding: 0 24px; }
+.about-kicker { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #888; margin-bottom: 12px; }
+.about-title { font-size: 28px; font-weight: 300; letter-spacing: 0.06em; line-height: 1.4; margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid #000; }
+.about-title em { font-style: normal; font-weight: 700; color: #0a246a; }
+.about-section { margin-bottom: 48px; }
+.about-section-title { font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 16px; }
+.about-body { font-size: 12px; line-height: 2.1; color: #333; }
+.about-body + .about-body { margin-top: 14px; }
+.about-cta { display: inline-block; margin-top: 48px; border: 1px solid #000; padding: 14px 36px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+.about-cta:hover { background: #000; color: #fff; }
+
+/* ── Cart page ── */
+.cart-wrap { max-width: 800px; margin: 60px auto 140px; padding: 0 24px; }
+.cart-title { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 40px; padding-bottom: 16px; border-bottom: 1px solid #000; }
+.cart-empty { text-align: center; padding: 80px 0; font-size: 11px; color: #888; }
+.cart-empty a { color: #000; text-decoration: underline; }
+.cart-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 40px; }
+.cart-table th { font-size: 9px; letter-spacing: 0.08em; color: #888; font-weight: 400; text-align: left; padding: 0 0 12px; border-bottom: 1px solid #e0e0e0; }
+.cart-table td { padding: 20px 0; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.cart-thumb { width: 64px; height: 80px; object-fit: cover; background: #f0f0f0; display: block; }
+.cart-item-name { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.cart-item-ko   { font-size: 10px; color: #888; margin-bottom: 4px; }
+.cart-item-size { font-size: 9px; letter-spacing: 0.08em; color: #555; }
+.cart-del { background: none; border: none; font-size: 12px; color: #aaa; padding: 4px 8px; }
+.cart-del:hover { color: #c00; }
+.cart-summary { text-align: right; }
+.cart-total-label { font-size: 9px; letter-spacing: 0.1em; color: #888; text-transform: uppercase; margin-bottom: 8px; }
+.cart-total-price { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+.cart-checkout-btn { display: inline-block; background: #000; color: #fff; border: none; padding: 15px 48px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+.cart-checkout-btn:hover { background: #333; }
+
+/* Add-to-cart button on product page */
+.cart-btn { width: 100%; padding: 13px; background: #fff; color: #000; border: 1px solid #000; font-family: 'Tahoma', sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+.cart-btn:hover:not(:disabled) { background: #f5f5f5; }
+
+/* ── Local Admin page ── */
+.local-admin-wrap { max-width: 960px; margin: 60px auto 120px; padding: 0 24px; }
+.local-admin-notice { background: #fffbe6; border: 1px solid #e8d56a; padding: 14px 18px; font-size: 10px; line-height: 1.7; margin-bottom: 32px; color: #555; }
+.local-admin-notice strong { color: #333; }

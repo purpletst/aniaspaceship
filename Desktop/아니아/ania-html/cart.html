@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>장바구니 — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<div class="cart-wrap">
+  <h1 class="cart-title">CART / 장바구니</h1>
+  <div id="cart-content"></div>
+</div>
+
+<script src="/js/config.js"></script>
+<script>
+function render() {
+  const el = document.getElementById('cart-content');
+  const cart = cartGet();
+
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty">
+      <p>장바구니가 비어 있습니다.</p>
+      <p style="margin-top:12px"><a href="/shop.html">쇼핑 계속하기</a></p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th style="width:80px"></th>
+          <th>상품</th>
+          <th>사이즈</th>
+          <th>수량</th>
+          <th style="text-align:right">금액</th>
+          <th style="width:40px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${cart.map((c, i) => `
+          <tr>
+            <td>
+              ${c.image
+                ? `<img src="${c.image}" alt="${c.name}" class="cart-thumb">`
+                : `<div class="cart-thumb"></div>`}
+            </td>
+            <td>
+              <div class="cart-item-name">${c.name}</div>
+              <div class="cart-item-ko">${c.name_ko}</div>
+            </td>
+            <td><span class="cart-item-size">${c.size}</span></td>
+            <td>${c.qty}</td>
+            <td style="text-align:right">${fmtPrice(c.price * c.qty)}</td>
+            <td>
+              <button class="cart-del" data-idx="${i}" title="삭제">✕</button>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="cart-summary">
+      <div class="cart-total-label">TOTAL</div>
+      <div class="cart-total-price">${fmtPrice(cartTotal())}</div>
+      <button class="cart-checkout-btn" id="checkout-btn">주문하기</button>
+    </div>`;
+
+  // 삭제 버튼
+  el.querySelectorAll('.cart-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cartRemove(Number(btn.dataset.idx));
+      render();
+    });
+  });
+
+  // 주문하기: 로그인 확인 후 주문 API 호출
+  document.getElementById('checkout-btn').addEventListener('click', async () => {
+    const authRes = await apiFetch(`${API}/auth.php?action=check`);
+    if (!authRes.ok || !authRes.data) {
+      location.href = `/login.html?return=/cart.html`;
+      return;
+    }
+    const btn = document.getElementById('checkout-btn');
+    btn.disabled = true; btn.textContent = '처리 중...';
+
+    const items = cartGet().map(c => ({
+      product_id: c.id, product_name: c.name, size: c.size, quantity: c.qty, unit_price: c.price,
+    }));
+    const res = await apiFetch(`${API}/orders.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items }),
+    });
+
+    if (res.ok) {
+      cartSave([]);  // 주문 완료 후 장바구니 비우기
+      document.querySelector('.cart-wrap').innerHTML = `
+        <div class="cart-empty" style="padding:120px 0">
+          <p style="font-size:40px;margin-bottom:24px">👾</p>
+          <p style="font-size:14px;font-weight:700;margin-bottom:12px">주문이 완료되었습니다!</p>
+          <p style="margin-bottom:32px">마이페이지에서 주문 현황을 확인하세요.</p>
+          <a href="/mypage.html" style="border:1px solid #000;padding:13px 32px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase">마이페이지</a>
+        </div>`;
+    } else {
+      btn.disabled = false; btn.textContent = '주문하기';
+      alert(res.error || '주문 처리 중 오류가 발생했습니다.');
+    }
+  });
+}
+
+render();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+<div id="ship-cursor"></div>
+</body>
+</html>

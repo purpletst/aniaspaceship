@@ -26,7 +26,7 @@
   <!-- Desktop: right user links / Mobile: left -->
   <div class="nav-user-links">
     <a href="/login.html" id="nav-auth-link" class="nav-auth-link">LOGIN</a>
-    <a href="#" class="nav-cart">CART (0)</a>
+    <a href="/cart.html" class="nav-cart">CART <span class="nav-cart-count">(0)</span></a>
   </div>
 
   <!-- Mobile only: hamburger (far right) -->
@@ -39,11 +39,13 @@
   <div class="h-menu">
     <button class="h-menu-item" id="shop-toggle">SHOP <span id="shop-toggle-icon">—</span></button>
     <div class="h-sub open" id="shop-sub">${subs}</div>
-    <a href="#" class="h-menu-item">COLLECTION</a>
-    <a href="#" class="h-menu-item">ABOUT</a>
+    <a href="/collection.html" class="h-menu-item">COLLECTION</a>
+    <a href="/about.html" class="h-menu-item">ABOUT</a>
     <hr class="h-divider">
     <a href="#" class="h-menu-item">CONTACT</a>
     <a href="#" class="h-menu-item">INSTAGRAM</a>
+    <hr class="h-divider">
+    <a href="/cart.html" class="h-menu-item">장바구니 <span class="nav-cart-count">(0)</span></a>
     <hr class="h-divider">
     <a href="/login.html"  class="h-menu-item" id="h-auth-link">로그인</a>
     <a href="/signup.html" class="h-menu-item">회원가입</a>
@@ -168,6 +170,9 @@
       </li>`;
     }).join('');
   }
+
+  // ── Cart badge ──
+  if (typeof cartUpdateBadge === 'function') cartUpdateBadge();
 
   // ── Auth state: LOGIN ↔ MYPAGE ──
   (async () => {
