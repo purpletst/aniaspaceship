@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로그인 — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="ship-cursor"></div>
+<div id="nav-placeholder"></div>
+<div id="hamburger-placeholder"></div>
+<div id="logo-placeholder"></div>
+
+<div class="auth-wrap">
+  <div class="auth-box">
+    <h1 class="auth-title">로그인 / LOGIN</h1>
+    <form class="auth-form" id="login-form">
+      <label class="auth-label">
+        EMAIL
+        <input type="email" class="auth-input" id="email" required autocomplete="email">
+      </label>
+      <label class="auth-label">
+        PASSWORD
+        <input type="password" class="auth-input" id="password" required autocomplete="current-password">
+      </label>
+      <p class="auth-error" id="login-error" style="display:none"></p>
+      <button type="submit" class="auth-submit" id="submit-btn">로그인</button>
+    </form>
+    <p class="auth-link">아직 회원이 아니신가요? <a href="/signup.html">회원가입</a></p>
+  </div>
+</div>
+
+<script src="/js/config.js"></script>
+<script>
+const returnPath = new URLSearchParams(location.search).get('return') || '/';
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const err = document.getElementById('login-error');
+  const btn = document.getElementById('submit-btn');
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = '처리 중...';
+
+  const res = await apiFetch(`${API}/auth.php?action=login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email:    document.getElementById('email').value,
+      password: document.getElementById('password').value,
+    }),
+  });
+
+  if (res.ok) {
+    location.href = returnPath;
+  } else {
+    err.textContent = res.error || '로그인 오류';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = '로그인';
+  }
+});
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+</body>
+</html>

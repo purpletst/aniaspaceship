@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>상품 — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="ship-cursor"></div>
+<div id="nav-placeholder"></div>
+<div id="hamburger-placeholder"></div>
+<div id="logo-placeholder"></div>
+
+<div id="product-detail" class="product-detail"></div>
+
+<script src="/js/config.js"></script>
+<script>
+const SIZES = ['XS','S','M','L','XL'];
+let selectedSize = null;
+let product = null;
+
+async function load() {
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) { document.getElementById('product-detail').innerHTML = '<p>상품을 찾을 수 없습니다.</p>'; return; }
+
+  let p = SEED_PRODUCTS.find(x => String(x.id) === id) || null;
+  const res = await apiFetch(`${API}/products.php?action=single&id=${id}`);
+  if (res.ok && res.data) p = res.data;
+
+  if (!p) { document.getElementById('product-detail').innerHTML = '<p>상품을 찾을 수 없습니다.</p>'; return; }
+  product = p;
+
+  const images = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+  const mainImg = images[0] || '';
+  const sold = !p.is_available || p.stock <= 0;
+
+  document.title = `${p.name_ko || p.name} — 아니아`;
+  document.getElementById('product-detail').innerHTML = `
+    <div class="product-images">
+      ${mainImg ? `<img src="${mainImg}" alt="${p.name}" class="main-img">` : '<div class="main-img" style="background:#f0f0f0"></div>'}
+    </div>
+    <div class="product-info">
+      <div class="product-info-season">26 F/W</div>
+      <h1 class="product-info-name">${p.name}</h1>
+      <p class="product-info-name-ko">${p.name_ko || ''}</p>
+      <p class="product-info-price">${fmtPrice(p.price)}</p>
+      ${!sold ? `
+        <p class="size-label">SIZE</p>
+        <div class="size-btns" id="size-btns">
+          ${SIZES.map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join('')}
+        </div>
+      ` : ''}
+      <button class="buy-btn" id="buy-btn" ${sold ? 'disabled' : ''}>${sold ? 'SOLD OUT' : '구매하기'}</button>
+      <p class="buy-msg" id="buy-msg"></p>
+      ${p.description ? `<p style="margin-top:24px;font-size:11px;line-height:1.8;color:#444">${p.description}</p>` : ''}
+    </div>`;
+
+  // Size buttons
+  const sizeBtns = document.getElementById('size-btns');
+  if (sizeBtns) {
+    sizeBtns.addEventListener('click', e => {
+      const btn = e.target.closest('.size-btn');
+      if (!btn) return;
+      sizeBtns.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = btn.dataset.size;
+    });
+  }
+
+  // Buy button
+  document.getElementById('buy-btn')?.addEventListener('click', handleBuy);
+}
+
+async function handleBuy() {
+  const msg = document.getElementById('buy-msg');
+  if (!selectedSize) { msg.textContent = '사이즈를 선택해주세요.'; msg.className = 'buy-msg'; return; }
+
+  const authRes = await apiFetch(`${API}/auth.php?action=check`);
+  if (!authRes.ok || !authRes.data) {
+    location.href = `/login.html?return=${encodeURIComponent(location.pathname + location.search)}`;
+    return;
+  }
+
+  const btn = document.getElementById('buy-btn');
+  btn.disabled = true; btn.textContent = '처리 중...';
+
+  const res = await apiFetch(`${API}/orders.php`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      items: [{ product_id: product.id, product_name: product.name, size: selectedSize, quantity: 1, unit_price: product.price }],
+    }),
+  });
+
+  if (res.ok) {
+    btn.textContent = '✓ 주문 완료';
+    msg.textContent = '주문이 완료되었습니다.';
+    msg.className = 'buy-msg buy-success';
+  } else {
+    btn.disabled = false; btn.textContent = '구매하기';
+    msg.textContent = res.error || '오류가 발생했습니다.';
+    msg.className = 'buy-msg';
+  }
+}
+
+load();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+</body>
+</html>

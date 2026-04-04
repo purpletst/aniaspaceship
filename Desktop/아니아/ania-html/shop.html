@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="ship-cursor"></div>
+<div id="nav-placeholder"></div>
+<div id="hamburger-placeholder"></div>
+<div id="logo-placeholder"></div>
+
+<div class="shop-page">
+  <div class="filter-tabs" id="filter-tabs"></div>
+  <div class="product-grid cols-4" id="product-grid"></div>
+</div>
+
+<script src="/js/config.js"></script>
+<script>
+const CATS = [
+  { label: 'ALL',         value: '' },
+  { label: 'OUTERWEAR',   value: 'outerwear' },
+  { label: 'TOPS',        value: 'tops' },
+  { label: 'BOTTOMS',     value: 'bottoms' },
+  { label: 'DRESSES',     value: 'dresses' },
+  { label: 'ACCESSORIES', value: 'accessories' },
+  { label: 'ETC',         value: 'etc' },
+];
+
+const params = new URLSearchParams(location.search);
+let currentCat = params.get('category') || '';
+
+// Filter tabs
+const tabs = document.getElementById('filter-tabs');
+tabs.innerHTML = CATS.map(c => `
+  <button class="filter-tab ${c.value === currentCat ? 'active' : ''}" data-cat="${c.value}">${c.label}</button>
+`).join('');
+
+tabs.addEventListener('click', e => {
+  const btn = e.target.closest('.filter-tab');
+  if (!btn) return;
+  currentCat = btn.dataset.cat;
+  tabs.querySelectorAll('.filter-tab').forEach(b => b.classList.toggle('active', b.dataset.cat === currentCat));
+  const url = new URL(location.href);
+  currentCat ? url.searchParams.set('category', currentCat) : url.searchParams.delete('category');
+  history.pushState({}, '', url);
+  loadProducts();
+});
+
+async function loadProducts() {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '<p style="padding:24px;font-size:11px;color:#888">불러오는 중...</p>';
+
+  let products = SEED_PRODUCTS.filter(p => !currentCat || p.category === currentCat);
+  const res = await apiFetch(`${API}/products.php?action=list${currentCat ? '&category=' + currentCat : ''}`);
+  if (res.ok && res.data.length) products = res.data;
+
+  if (!products.length) { grid.innerHTML = '<p style="padding:24px;font-size:11px;color:#888">상품이 없습니다.</p>'; return; }
+
+  grid.innerHTML = products.map(p => {
+    const img = (p.images && p.images.length) ? (typeof p.images === 'string' ? JSON.parse(p.images)[0] : p.images[0]) : '';
+    const sold = !p.is_available || p.stock <= 0;
+    return `<a href="/product.html?id=${p.id}" class="product-card">
+      ${img
+        ? `<img src="${img}" alt="${p.name}" class="product-card-img">`
+        : `<div class="product-card-img placeholder">NO IMAGE</div>`}
+      <div class="product-card-info">
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-name-ko">${p.name_ko || ''}</div>
+        <div class="product-card-price">${fmtPrice(p.price)}</div>
+        ${sold ? '<span class="product-card-badge sold">OUT OF STOCK</span>' : ''}
+      </div>
+    </a>`;
+  }).join('');
+}
+
+loadProducts();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+</body>
+</html>

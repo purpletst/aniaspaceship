@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>마이페이지 — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="ship-cursor"></div>
+<div id="nav-placeholder"></div>
+<div id="hamburger-placeholder"></div>
+<div id="logo-placeholder"></div>
+
+<div class="mypage-wrap" id="mypage-wrap" style="display:none">
+  <h1 class="mypage-title">마이페이지</h1>
+  <p class="mypage-email" id="mypage-email"></p>
+
+  <div class="status-bar" id="status-bar"></div>
+
+  <div class="mypage-tabs">
+    <button class="mypage-tab active" data-tab="order">ORDER</button>
+    <button class="mypage-tab" data-tab="address">ADDRESS</button>
+    <button class="mypage-tab" data-tab="profile">PROFILE</button>
+    <button class="mypage-tab" id="logout-btn">LOGOUT</button>
+  </div>
+
+  <div class="mypage-content" id="tab-content"></div>
+</div>
+
+<script src="/js/config.js"></script>
+<script>
+const STATUS_LABELS = { pending:'입금전', confirmed:'배송준비중', shipped:'배송중', delivered:'배송완료', cancelled:'취소' };
+const STATUS_ORDER  = ['pending','confirmed','shipped','delivered'];
+
+let userData = null, orders = [], profile = null, currentTab = 'order';
+
+async function init() {
+  const authRes = await apiFetch(`${API}/auth.php?action=check`);
+  if (!authRes.ok || !authRes.data) {
+    location.href = `/login.html?return=/mypage.html`;
+    return;
+  }
+  userData = authRes.data;
+  document.getElementById('mypage-email').textContent = userData.email;
+
+  const [ordersRes, profileRes] = await Promise.all([
+    apiFetch(`${API}/orders.php`),
+    apiFetch(`${API}/profile.php`),
+  ]);
+  if (ordersRes.ok) orders = ordersRes.data;
+  if (profileRes.ok) profile = profileRes.data;
+
+  // Status bar
+  const counts = {};
+  STATUS_ORDER.forEach(s => { counts[s] = orders.filter(o => o.status === s).length; });
+  document.getElementById('status-bar').innerHTML = STATUS_ORDER.map(s => `
+    <div class="status-item" onclick="switchTab('order')">
+      <span class="status-count">${counts[s]}</span>
+      <span class="status-label">${STATUS_LABELS[s]}</span>
+    </div>`).join('');
+
+  document.getElementById('mypage-wrap').style.display = 'block';
+  renderTab('order');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.mypage-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  renderTab(tab);
+}
+
+document.querySelectorAll('.mypage-tab[data-tab]').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await apiFetch(`${API}/auth.php?action=logout`);
+  location.href = '/index.html';
+});
+
+function renderTab(tab) {
+  const el = document.getElementById('tab-content');
+
+  if (tab === 'order') {
+    if (!orders.length) { el.innerHTML = '<p class="mypage-empty">주문 내역이 없습니다.</p>'; return; }
+    el.innerHTML = `<table class="mypage-table">
+      <thead><tr><th>주문일</th><th>상품</th><th>금액</th><th>상태</th></tr></thead>
+      <tbody>${orders.map(o => `
+        <tr>
+          <td>${new Date(o.created_at).toLocaleDateString('ko-KR')}</td>
+          <td>${o.items.map(i => `${i.product_name} (${i.size})`).join(', ')}</td>
+          <td>${fmtPrice(o.total_price)}</td>
+          <td>${STATUS_LABELS[o.status] || o.status}</td>
+        </tr>`).join('')}
+      </tbody></table>`;
+  }
+
+  if (tab === 'address') {
+    el.innerHTML = `<div class="edit-form">
+      <div class="form-field"><label class="form-label">우편번호</label><input class="form-input" id="f-postal" value="${profile?.postal_code||''}"></div>
+      <div class="form-field"><label class="form-label">기본주소</label><input class="form-input" id="f-address" value="${profile?.address||''}"></div>
+      <div class="form-field"><label class="form-label">상세주소</label><input class="form-input" id="f-addr-d" value="${profile?.address_detail||''}"></div>
+      <p class="save-msg" id="addr-msg"></p>
+      <button class="save-btn" id="addr-save">저장</button>
+    </div>`;
+    document.getElementById('addr-save').addEventListener('click', async () => {
+      const res = await apiFetch(`${API}/profile.php`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ postal_code: document.getElementById('f-postal').value, address: document.getElementById('f-address').value, address_detail: document.getElementById('f-addr-d').value }),
+      });
+      document.getElementById('addr-msg').textContent = res.ok ? '저장되었습니다.' : (res.error || '오류');
+    });
+  }
+
+  if (tab === 'profile') {
+    el.innerHTML = `<div class="edit-form">
+      <div class="form-field"><label class="form-label">이름</label><input class="form-input" id="f-name" value="${profile?.name||''}"></div>
+      <div class="form-field"><label class="form-label">휴대전화</label><input class="form-input" id="f-mobile" type="tel" inputmode="numeric" maxlength="13" value="${profile?.mobile||''}"></div>
+      <p class="save-msg" id="prof-msg"></p>
+      <button class="save-btn" id="prof-save">저장</button>
+    </div>`;
+    document.getElementById('f-mobile').addEventListener('input', function(){ this.value = formatMobile(this.value); });
+    document.getElementById('prof-save').addEventListener('click', async () => {
+      const res = await apiFetch(`${API}/profile.php`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ name: document.getElementById('f-name').value, mobile: document.getElementById('f-mobile').value }),
+      });
+      document.getElementById('prof-msg').textContent = res.ok ? '저장되었습니다.' : (res.error || '오류');
+    });
+  }
+}
+
+init();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+</body>
+</html>

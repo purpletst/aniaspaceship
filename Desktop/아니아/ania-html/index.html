@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>아니아 — 26FW</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Ship cursor overlay -->
+<div id="ship-cursor"></div>
+
+<!-- Nav -->
+<div id="nav-placeholder"></div>
+<div id="hamburger-placeholder"></div>
+<div id="logo-placeholder"></div>
+
+<!-- XP Popup -->
+<div class="popup-overlay" id="popup-overlay">
+  <div class="popup-window" id="popup-window">
+    <div class="popup-titlebar" id="popup-titlebar">
+      <div class="popup-title-label">
+        <span>👾</span> 아니아.exe — 경고 / Warning
+      </div>
+      <div class="popup-chrome-btns" data-no-drag>
+        <button class="popup-chrome-btn min">&#x2212;</button>
+        <button class="popup-chrome-btn max">&#9633;</button>
+        <button class="popup-chrome-btn cls popup-close" aria-label="닫기">&#x2715;</button>
+      </div>
+    </div>
+    <div class="popup-body">
+      <img src="/assets/character-base.png" alt="아니아" class="popup-character">
+      <div class="popup-dialog">
+        <div class="popup-bubble">
+          <span class="popup-warn">⚠ 시스템 알림 / SYSTEM ALERT</span>
+          <span class="popup-main">
+            절대 바이러스 아닙니다.<br>
+            제발 믿어주세요...<br>
+            전 아니아입니다.
+          </span>
+          <span class="popup-sub">
+            👽 지구인으로 살아남기 가이드<br>
+            GUIDE TO SURVIVING AS AN EARTHLING<br><br>
+            지구가 어려운 당신. 제가 필요합니다.<br>
+            안내를 원할 시 설치하기를 눌러주세요.
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn primary popup-close">설치하기 &#9654;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<main class="home-split">
+  <!-- Hero -->
+  <section class="hero-panel">
+    <img src="/assets/hero-moodboard.png" alt="" class="hero-bg" aria-hidden="true">
+    <div class="hero-inner">
+      <div class="hero-season">26 F/W COLLECTION</div>
+      <img src="/assets/character-base.png" alt="아니아 캐릭터" class="hero-character">
+      <p class="hero-headline">
+        지구인으로 살아남기 가이드<br>
+        <em>GUIDE TO SURVIVING</em><br>
+        <em>AS AN EARTHLING</em>
+      </p>
+      <p class="hero-sub">→ SCROLL TO EXPLORE →</p>
+    </div>
+  </section>
+
+  <!-- Product grid (right) -->
+  <div>
+    <div class="product-grid cols-2" id="product-grid"></div>
+  </div>
+</main>
+
+<script src="/js/config.js"></script>
+<script>
+(async () => {
+  const grid = document.getElementById('product-grid');
+  let products = SEED_PRODUCTS.slice(0, 6);
+
+  const res = await apiFetch(`${API}/products.php?action=list&limit=6`);
+  if (res.ok && res.data.length) products = res.data;
+
+  grid.innerHTML = products.map(p => {
+    const img = (p.images && p.images.length) ? (typeof p.images === 'string' ? JSON.parse(p.images)[0] : p.images[0]) : '';
+    const sold = !p.is_available || p.stock <= 0;
+    return `<a href="/product.html?id=${p.id}" class="product-card">
+      ${img
+        ? `<img src="${img}" alt="${p.name}" class="product-card-img">`
+        : `<div class="product-card-img placeholder">NO IMAGE</div>`}
+      <div class="product-card-info">
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-name-ko">${p.name_ko || ''}</div>
+        <div class="product-card-price">${fmtPrice(p.price)}</div>
+        ${sold ? '<span class="product-card-badge sold">OUT OF STOCK</span>' : ''}
+      </div>
+    </a>`;
+  }).join('');
+})();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/popup.js"></script>
+<script src="/js/cursor.js"></script>
+</body>
+</html>
