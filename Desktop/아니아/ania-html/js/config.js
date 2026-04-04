@@ -8,12 +8,11 @@ const SITE = {
   season: '26 F/W',
   nav: {
     bg: '#000',
+    // ✏️ 메뉴 항목 편집: label(표시명) + href(링크) 수정
     links: [
       { label: 'SHOP',       href: '/shop.html' },
-      { label: 'SS',         href: '/shop.html?category=tops' },
-      { label: 'HOUSE',      href: '#' },
       { label: 'COLLECTION', href: '#' },
-      { label: 'STOCKIST',   href: '#' },
+      { label: 'ABOUT',      href: '#' },
     ],
     shopSubs: [
       { label: 'ALL',         href: '/shop.html' },

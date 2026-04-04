@@ -2,13 +2,16 @@
 // 아니아 — XP Popup drag + close
 // ─────────────────────────────────────────
 (function () {
-  const params = new URLSearchParams(location.search);
-  if (params.get('nopopup')) return;
+  // sessionStorage: show once per browser session, clean URL (no ?nopopup=1)
+  if (sessionStorage.getItem('popupShown')) return;
 
   const overlay = document.getElementById('popup-overlay');
   const win     = document.getElementById('popup-window');
   const bar     = document.getElementById('popup-titlebar');
   if (!overlay || !win || !bar) return;
+
+  // Mark shown immediately so logo-click navigating back won't re-show
+  sessionStorage.setItem('popupShown', '1');
 
   // Close
   document.querySelectorAll('.popup-close').forEach(btn => {
