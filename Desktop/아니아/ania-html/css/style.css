@@ -231,10 +231,7 @@ button { font-family: inherit; }
 
 /* ── Hero Panel ── */
 .hero-panel {
-  position: sticky;      /* 좌측 패널: 스크롤 시 뷰포트에 고정 */
-  top: 100px;            /* 헤더 높이 */
-  height: calc(100vh - 100px);
-  align-self: start;     /* CSS grid sticky 필수: stretch 대신 start */
+  position: relative;
   overflow: hidden;
   border-right: 1px solid #d8d8d8;
   background-color: #b8dbd3;
@@ -459,13 +456,8 @@ button { font-family: inherit; }
   .product-detail { grid-template-columns: 1fr; gap: 24px; }
   .modal-grid { grid-template-columns: 1fr; }
 
-  /* Hero: 모바일 단일 컬럼에서는 sticky 불필요, 자연 스크롤 */
-  .hero-panel {
-    position: relative;
-    height: auto;
-    min-height: 55vh;
-    background-attachment: scroll;  /* iOS Safari fixed 글리치 방지 */
-  }
+  /* iOS Safari: background-attachment:fixed 글리치 방지 */
+  .hero-panel { background-attachment: scroll; }
 }
 @media (max-width: 480px) {
   .product-grid.cols-2, .product-grid.cols-4 { grid-template-columns: 1fr; }
