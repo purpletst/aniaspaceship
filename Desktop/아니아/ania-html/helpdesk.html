@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>고객지원 — 아니아</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<div class="helpdesk-wrap">
+
+  <!-- 탭 바 -->
+  <nav class="helpdesk-tabs" id="helpdesk-tabs">
+    <button class="helpdesk-tab" data-tab="faq">FAQ</button>
+    <button class="helpdesk-tab" data-tab="board">BOARD</button>
+    <button class="helpdesk-tab" data-tab="contact">CONTACT</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════ FAQ ══ -->
+  <div class="helpdesk-panel" id="panel-faq">
+    <h2 class="helpdesk-panel-title">FAQ</h2>
+
+    <div class="faq-list">
+
+      <!-- 1. CS 안내 -->
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-text">CS 안내 / Customer Service Information</span>
+          <span class="faq-icon">∨</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p class="faq-head">CS 안내</p>
+            <p>아니아 공식 CS 채널: 홈페이지 1:1 문의게시판 &amp; 고객센터</p>
+            <p>고객센터 연락처: <span id="cs-phone"></span></p>
+            <p>고객센터 영업시간: 평일 14:00 ~ 18:00 (공휴일 휴무)</p>
+            <br>
+            <p class="faq-head">Customer Service Information</p>
+            <p>Ania Official Customer Service Channels: Help Desk on the website &amp; Customer Service Center</p>
+            <p>Customer Service Contact: <span id="cs-phone-en"></span></p>
+            <p>Customer Service Operating Hours: Weekdays 14:00 – 18:00 KST, Closed on public holidays</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 배송 안내 -->
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-text">배송 안내 / Shipping Information</span>
+          <span class="faq-icon">∨</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p class="faq-head">배송 안내</p>
+            <p>- 오전 9시 30분 이전 구매 시 당일 출고처리</p>
+            <p>- [배송준비] 상태의 주문건은 상품 입고 및 택배사 인계처리 중으로 주문 취소 및 변경 불가</p>
+            <p>- 배송비: 조건부 무료 (주문금액 50,000원 미만 시 3,000원 부과)</p>
+            <p>- 배송기간: 1-3일 (영업일 기준)</p>
+            <p>- 배송 안내: 제주 및 도서/산간 지역의 경우 별도금 3,500원 추가</p>
+            <p>- 퀵 서비스 및 매장 픽업 서비스 불가</p>
+            <br>
+            <p class="faq-head">해외 배송 (International Shipping)</p>
+            <p>배송 방법: 택배 (EMS)</p>
+            <p>배송 지역:</p>
+            <p>- 아시아: 일본, 중국, 홍콩, 마카오, 태국, 대만, 필리핀</p>
+            <p>- 북미: 미국, 캐나다</p>
+            <p>- 유럽: 영국, 프랑스, 독일, 스페인, 포르투갈, 네덜란드, 러시아, 벨기에, 스웨덴, 스위스, 이탈리아, 오스트리아, 크로아티아</p>
+            <p>- 오세아니아: 호주</p>
+            <p>배송비: 국가별 상이</p>
+            <p>배송기간: 배송일로부터 7-9일</p>
+            <br>
+            <p class="faq-head">Shipping Information (Domestic)</p>
+            <p>- Orders placed before 9:30 AM will be shipped on the same day.</p>
+            <p>- Orders with [Preparing for Shipment] status cannot be canceled or modified.</p>
+            <p>- Shipping Fee: Conditional free shipping (₩3,000 applies for orders under ₩50,000).</p>
+            <p>- Delivery Period: 1-3 business days.</p>
+            <p>- Jeju Island and remote areas: ₩3,500 additional fee.</p>
+            <p>- Quick delivery and in-store pickup not available.</p>
+            <br>
+            <p class="faq-head">International Shipping</p>
+            <p>Shipping Method: Courier (EMS)</p>
+            <p>Delivery Areas:</p>
+            <p>- Asia: Japan, China, Hong Kong, Macau, Thailand, Taiwan, Philippines</p>
+            <p>- North America: United States, Canada</p>
+            <p>- Europe: United Kingdom, France, Germany, Spain, Portugal, Netherlands, Russia, Belgium, Sweden, Switzerland, Italy, Austria, Croatia</p>
+            <p>- Oceania: Australia</p>
+            <p>Shipping Fee: Varies by country. Delivery: 7-9 days from shipping date.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 교환 안내 -->
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-text">교환 안내 / Exchange Information</span>
+          <span class="faq-icon">∨</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p class="faq-head">교환 안내</p>
+            <p>- 제품 수령일로부터 7일 이내에 마이페이지 &gt; 주문내역에서 교환 신청</p>
+            <p>- 영업일 내에 신청한 교환건 확인하여 교환건 접수 및 지정 택배사 자동 수거접수 처리 진행</p>
+            <p>- 동일 상품 동일 옵션 내 사이즈 변경만 가능 (색상/제품 변경 희망할 경우 반품 후 구매 요청)</p>
+            <p>- 교환 배송료의 경우 제품 발송 시 6,000원 동봉 or 계좌입금</p>
+            <p>- 제주도 및 도서산간 지역의 경우 추가 배송비가 발생하여 교환 시 왕복 배송비 ₩13,000 동봉 or 계좌입금</p>
+            <p>- 교환 배송료 미전달 / 미입금 시 처리에 지연 발생할 수 있습니다.</p>
+            <p>- 오배송 / 불량에 의한 교환 배송료는 무료로 처리</p>
+            <p>- 수거된 제품이 반품지에 도착한 후 상품 검수에 통과했을 경우 교환제품 발송. 검수의 경우 1-3일 소요</p>
+            <p>- 제품 실측 사이즈의 경우 ±2cm 내외의 오차가 있을 수 있습니다. 이는 불량으로 인한 교환/환불 대상으로 보기 어려운 점 안내드립니다.</p>
+            <br>
+            <p class="faq-head">Exchange Information</p>
+            <p>- Exchange requests must be submitted within 7 days of receiving the product via My Page &gt; Order History.</p>
+            <p>- Only size exchanges are allowed for the same product and option. (For color/product changes, please return and reorder.)</p>
+            <p>- Exchange shipping fee: ₩6,000 included with return package or bank transfer. Jeju/remote: ₩13,000 round-trip.</p>
+            <p>- If the exchange is due to a wrong item or defect, shipping is covered by us.</p>
+            <p>- Inspection takes 1-3 business days after arrival at return center.</p>
+            <p>- Size deviation of ±2cm is not considered a defect and is not eligible for exchange.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 반품 안내 -->
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-text">반품 안내 / Return Information</span>
+          <span class="faq-icon">∨</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p class="faq-head">반품 안내</p>
+            <p>- 제품 수령일로부터 7일 이내에 마이페이지 &gt; 주문내역에서 반품 신청</p>
+            <p>- 영업일 내에 신청한 반품건 확인하여 반품건 접수 및 지정 택배사 자동 수거접수 처리 진행</p>
+            <p>- 지정된 택배사를 통하지 않은 다른 운송 업체를 이용하여 반품 시 문제가 생길 경우 해당 반품에 대한 처리가 어렵습니다.</p>
+            <p>- 반품 배송료 6,000원은 환불 금액에서 차감을 원칙으로 진행</p>
+            <p>- 제주도 및 도서산간 지역의 경우 추가 배송비가 발생하여 반품 및 교환 시 왕복 배송비 ₩13,000이 부과됩니다.</p>
+            <p>- 오배송/불량에 의한 교환 배송료는 무료로 처리</p>
+            <p>- 수거된 제품이 반품지에 도착한 후 상품 검수에 통과했을 경우 환불처리 진행. 검수의 경우 1-3일 소요</p>
+            <p>- 제품 실측 사이즈의 경우 ±2cm 내외의 오차가 있을 수 있습니다. 이는 불량으로 인한 교환/환불 대상으로 보기 어려운 점 안내드립니다.</p>
+            <br>
+            <p class="faq-head">반품이 불가능한 경우</p>
+            <p>- 수령일로부터 7일 이후 접수했을 경우</p>
+            <p>- 제품 택 제거 및 제품 포장 구성품(폴리백, 신발박스, 라벨)이 손상 또는 변경된 경우</p>
+            <p>- 일부 제품 (주얼리, 포장 스티커 제거한 코스메틱류)</p>
+            <p>- 착용 흔적 및 제품에 손상(오염, 냄새, 파손)이 있는 경우</p>
+            <p>&nbsp;&nbsp;1. 착용, 세탁, 수선으로 인한 주름 및 형태 변형이 확인될 경우</p>
+            <p>&nbsp;&nbsp;2. 세탁제·향수·체취 등 냄새가 배어 있는 경우</p>
+            <p>&nbsp;&nbsp;3. 원단 손상, 부자재 파손 등 상품 가치가 훼손된 경우</p>
+            <br>
+            <p class="faq-head">Return Information</p>
+            <p>- Return requests must be submitted within 7 days via My Page &gt; Order History.</p>
+            <p>- Return shipping fee of ₩6,000 will be deducted from the refund amount.</p>
+            <p>- Jeju Island and remote areas: ₩13,000 round-trip fee applies.</p>
+            <p>- Wrong item/defect returns: shipping covered by us.</p>
+            <p>- Inspection takes 1-3 business days.</p>
+            <br>
+            <p class="faq-head">Non-Returnable Cases</p>
+            <p>- After 7 days from receipt date</p>
+            <p>- Tags removed or packaging components damaged</p>
+            <p>- Worn, washed, or altered items; items with odors or fabric damage</p>
+            <p>- Size deviation of ±2cm is not eligible for return</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 기타 안내 -->
+      <div class="faq-item">
+        <button class="faq-q">
+          <span class="faq-q-text">기타 안내 / Other Information</span>
+          <span class="faq-icon">∨</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p class="faq-head">기타 안내</p>
+            <p>적립금의 경우 오프라인 스토어 전용 혜택으로, 온라인 사이트 내에서 조회 및 사용이 불가합니다.</p>
+            <p>적립 금액이 궁금하실 경우 오프라인 스토어 유선 문의 및 자사 1:1 게시판을 통해 문의 남겨주시면 확인 가능합니다.</p>
+            <br>
+            <p>제품 실측 사이즈의 경우 ±2cm 내외의 오차가 있을 수 있습니다. 이는 불량으로 인한 교환/환불 대상으로 보기 어려운 점 안내드립니다.</p>
+            <br>
+            <p class="faq-head">Other Information</p>
+            <p>Reward points are an in-store exclusive benefit and cannot be viewed or used on the online website.</p>
+            <p>To check your reward point balance, please contact an offline store or leave an inquiry on our 1:1 board.</p>
+            <br>
+            <p>Please note that a size deviation of ±2cm may occur in garment measurements. This is not considered a defect and is not eligible for return or exchange.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.faq-list -->
+  </div><!-- /#panel-faq -->
+
+  <!-- ══════════════════════════════════════ BOARD ══ -->
+  <div class="helpdesk-panel" id="panel-board" style="display:none">
+    <h2 class="helpdesk-panel-title">BOARD</h2>
+
+    <!-- 카테고리 탭 -->
+    <div class="board-cats" id="board-cats">
+      <button class="board-cat active" data-cat="">전체</button>
+      <button class="board-cat" data-cat="product">제품문의</button>
+      <button class="board-cat" data-cat="delivery">배송문의</button>
+      <button class="board-cat" data-cat="exchange">교환 및 반품 문의</button>
+      <button class="board-cat" data-cat="cancel">취소문의</button>
+      <button class="board-cat" data-cat="other">기타문의</button>
+    </div>
+
+    <!-- 문의 목록 -->
+    <ul class="board-list" id="board-list">
+      <li class="board-loading">불러오는 중...</li>
+    </ul>
+
+    <!-- 더보기 -->
+    <div id="board-more-wrap" style="display:none;text-align:center;margin:24px 0">
+      <button class="board-more-btn" id="board-more-btn">더보기</button>
+    </div>
+
+    <!-- 문의 상세 뷰 -->
+    <div class="inquiry-detail" id="inquiry-detail" style="display:none">
+      <button class="inquiry-back" id="inquiry-back">← 목록으로</button>
+      <div id="inquiry-content"></div>
+      <!-- 비밀번호 입력 박스 -->
+      <div class="inquiry-pw-box" id="inquiry-pw-box" style="display:none">
+        <p class="inquiry-pw-msg">🔒 이 문의는 비밀글입니다. 문의 작성 시 설정한 비밀번호를 입력해주세요.</p>
+        <div class="inquiry-pw-row">
+          <input type="password" class="inquiry-pw-input" id="inquiry-pw-input" placeholder="비밀번호" maxlength="50">
+          <button class="inquiry-pw-submit" id="inquiry-pw-submit">확인</button>
+        </div>
+        <p class="inquiry-pw-err" id="inquiry-pw-err"></p>
+      </div>
+    </div>
+
+    <!-- 문의 작성 폼 -->
+    <div class="inquiry-form" id="inquiry-form" style="display:none">
+      <h3 class="inquiry-form-title">1:1 문의하기</h3>
+      <label class="inq-label">문의 유형</label>
+      <select class="inq-input" id="inq-cat">
+        <option value="product">제품문의</option>
+        <option value="delivery">배송문의</option>
+        <option value="exchange">교환 및 반품 문의</option>
+        <option value="cancel">취소문의</option>
+        <option value="other">기타문의</option>
+      </select>
+      <label class="inq-label">제목</label>
+      <input type="text" class="inq-input" id="inq-title" maxlength="200" placeholder="제목을 입력해주세요">
+      <label class="inq-label">내용</label>
+      <textarea class="inq-input inq-body" id="inq-body" placeholder="문의 내용을 자세히 입력해주세요"></textarea>
+      <label class="inq-label">비밀번호 <span class="inq-label-sub">(문의 열람 시 사용, 4자 이상)</span></label>
+      <input type="password" class="inq-input" id="inq-pw" maxlength="50" placeholder="문의 비밀번호 (4자 이상)">
+      <p class="inq-err" id="inq-err"></p>
+      <div class="inq-actions">
+        <button class="inq-submit-btn" id="inq-submit">문의 등록</button>
+        <button class="inq-cancel-btn" id="inq-cancel">취소</button>
+      </div>
+    </div>
+
+    <!-- 목록 하단 버튼 영역 -->
+    <div class="board-actions" id="board-actions">
+      <button class="board-write-btn" id="board-write-btn">문의하기</button>
+    </div>
+
+  </div><!-- /#panel-board -->
+
+  <!-- ══════════════════════════════════════ CONTACT ══ -->
+  <div class="helpdesk-panel" id="panel-contact" style="display:none">
+    <h2 class="helpdesk-panel-title">CONTACT US</h2>
+
+    <div class="contact-block">
+      <p class="contact-label">PRESS / WHOLESALE</p>
+      <p class="contact-value" id="contact-email-press"></p>
+    </div>
+    <div class="contact-block">
+      <p class="contact-label">CUSTOMER SERVICE</p>
+      <p class="contact-value" id="contact-email-cs"></p>
+    </div>
+
+  </div><!-- /#panel-contact -->
+
+</div><!-- /.helpdesk-wrap -->
+
+<script src="/js/config.js"></script>
+<script>
+(function () {
+  // ── 탭 전환 ──────────────────────────────────────────
+  const TABS = ['faq', 'board', 'contact'];
+  let activeTab = '';
+
+  function activateTab(tab) {
+    if (!TABS.includes(tab)) tab = 'faq';
+    activeTab = tab;
+    document.querySelectorAll('.helpdesk-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    TABS.forEach(t => {
+      const panel = document.getElementById('panel-' + t);
+      if (panel) panel.style.display = (t === tab) ? '' : 'none';
+    });
+    if (tab === 'board' && !boardLoaded) loadBoard();
+  }
+
+  document.getElementById('helpdesk-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.helpdesk-tab');
+    if (!btn) return;
+    history.replaceState(null, '', '#' + btn.dataset.tab);
+    activateTab(btn.dataset.tab);
+  });
+
+  window.addEventListener('hashchange', () => {
+    activateTab(location.hash.replace('#', '') || 'faq');
+  });
+
+  // ── CONTACT 정보 주입 ────────────────────────────────
+  (function () {
+    const email = (SITE.info && SITE.info.email) ? SITE.info.email : '';
+    const setEl = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+    if (email) {
+      setEl('contact-email-press', `<a href="mailto:${email}">${email}</a>`);
+      setEl('contact-email-cs',    `<a href="mailto:${email}">${email}</a>`);
+    } else {
+      setEl('contact-email-press', '준비 중입니다.');
+      setEl('contact-email-cs',    '준비 중입니다.');
+    }
+    const phone = (SITE.info && SITE.info.phone) ? SITE.info.phone : '';
+    setEl('cs-phone',    phone || '준비 중');
+    setEl('cs-phone-en', phone || 'TBD');
+  })();
+
+  // ── FAQ 아코디언 ─────────────────────────────────────
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item  = btn.closest('.faq-item');
+      const body  = item.querySelector('.faq-a');
+      const icon  = btn.querySelector('.faq-icon');
+      const isOpen = body.classList.contains('open');
+
+      // 다른 것 전부 닫기
+      document.querySelectorAll('.faq-a.open').forEach(el => {
+        el.classList.remove('open');
+        el.closest('.faq-item').querySelector('.faq-icon').textContent = '∨';
+      });
+
+      if (!isOpen) {
+        body.classList.add('open');
+        icon.textContent = '∧';
+      }
+    });
+  });
+
+  // ── BOARD ─────────────────────────────────────────────
+  let boardLoaded = false;
+  let currentCat  = '';
+  let currentPage = 1;
+  let totalItems  = 0;
+  let currentUser = null;   // { id, email, is_admin } or null
+  let currentInquiryId = null;
+  let pwFailCount = 0;
+  let pwLockTimer = null;
+
+  const CAT_LABELS = {
+    product: '제품문의', delivery: '배송문의',
+    exchange: '교환 및 반품 문의', cancel: '취소문의', other: '기타문의',
+  };
+
+  async function loadBoard() {
+    boardLoaded = true;
+    // 인증 상태 확인
+    const authRes = await apiFetch(`${API}/auth.php?action=check`);
+    currentUser = (authRes.ok && authRes.data) ? authRes.data : null;
+    await fetchList(1);
+  }
+
+  async function fetchList(page) {
+    currentPage = page;
+    const listEl   = document.getElementById('board-list');
+    const moreWrap = document.getElementById('board-more-wrap');
+
+    listEl.innerHTML = '<li class="board-loading">불러오는 중...</li>';
+    hideDetail();
+
+    const catParam = currentCat ? `&category=${encodeURIComponent(currentCat)}` : '';
+    const res = await apiFetch(`${API}/inquiries.php?action=list&page=${page}${catParam}`);
+
+    if (!res.ok) {
+      listEl.innerHTML = `<li class="board-empty">서버 연결 후 이용 가능합니다.<br><small>${res.error || ''}</small></li>`;
+      moreWrap.style.display = 'none';
+      return;
+    }
+
+    const { items, total, limit } = res.data;
+    totalItems = total;
+
+    if (page === 1) listEl.innerHTML = '';
+    if (!items || !items.length) {
+      if (page === 1) listEl.innerHTML = '<li class="board-empty">문의가 없습니다.</li>';
+      moreWrap.style.display = 'none';
+      return;
+    }
+
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'board-item';
+      li.dataset.id = item.id;
+      const reHtml  = item.has_reply ? '<span class="board-badge-re">re</span> ' : '';
+      const newHtml = item.is_new    ? '<span class="board-badge-new">NEW</span>' : '';
+      const catLabel = CAT_LABELS[item.category] || item.category;
+      const dateStr  = item.created_at ? item.created_at.slice(0, 10) : '';
+
+      li.innerHTML = `
+        <span class="board-lock">🔒</span>
+        <span class="board-item-cat">${catLabel}</span>
+        <span class="board-item-title">${reHtml}${esc(item.title)} ${newHtml}</span>
+        <span class="board-item-meta">${dateStr} &nbsp; ${esc(item.author)}</span>`;
+      li.addEventListener('click', () => openInquiry(item.id));
+      listEl.appendChild(li);
+    });
+
+    const shown = page * limit;
+    moreWrap.style.display = shown < total ? '' : 'none';
+  }
+
+  document.getElementById('board-more-btn').addEventListener('click', () => {
+    fetchList(currentPage + 1);
+  });
+
+  // 카테고리 탭
+  document.getElementById('board-cats').addEventListener('click', e => {
+    const btn = e.target.closest('.board-cat');
+    if (!btn) return;
+    document.querySelectorAll('.board-cat').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    fetchList(1);
+  });
+
+  // ── 상세 보기 ─────────────────────────────────────────
+  async function openInquiry(id) {
+    currentInquiryId = id;
+    pwFailCount = 0;
+
+    if (!currentUser) {
+      const returnUrl = encodeURIComponent(location.pathname + '#board');
+      location.href = `/login.html?return=${returnUrl}`;
+      return;
+    }
+
+    showDetailLoading();
+
+    const res = await apiFetch(`${API}/inquiries.php?action=get&id=${id}`);
+    if (!res.ok) {
+      showDetailError(res.error || '오류가 발생했습니다.');
+      return;
+    }
+
+    const data = res.data;
+    if (data.needs_password) {
+      showPasswordPrompt(data);
+    } else {
+      renderDetail(data);
+    }
+  }
+
+  function showDetailLoading() {
+    const detailEl = document.getElementById('inquiry-detail');
+    const listEl   = document.getElementById('board-list');
+    const formEl   = document.getElementById('inquiry-form');
+    const actEl    = document.getElementById('board-actions');
+    const moreWrap = document.getElementById('board-more-wrap');
+    listEl.style.display   = 'none';
+    formEl.style.display   = 'none';
+    actEl.style.display    = 'none';
+    moreWrap.style.display = 'none';
+    document.getElementById('board-cats').style.display = 'none';
+    detailEl.style.display = '';
+    document.getElementById('inquiry-content').innerHTML = '<p class="board-loading">불러오는 중...</p>';
+    document.getElementById('inquiry-pw-box').style.display = 'none';
+  }
+
+  function hideDetail() {
+    document.getElementById('inquiry-detail').style.display  = 'none';
+    document.getElementById('inquiry-form').style.display    = 'none';
+    document.getElementById('board-list').style.display      = '';
+    document.getElementById('board-actions').style.display   = '';
+    document.getElementById('board-cats').style.display      = '';
+  }
+
+  function showPasswordPrompt(data) {
+    const detailEl  = document.getElementById('inquiry-detail');
+    const contentEl = document.getElementById('inquiry-content');
+    const pwBox     = document.getElementById('inquiry-pw-box');
+
+    detailEl.style.display = '';
+    contentEl.innerHTML = `
+      <div class="inquiry-header">
+        <span class="inquiry-cat-label">${esc(CAT_LABELS[data.category] || data.category)}</span>
+        <h3 class="inquiry-title">${esc(data.title)}</h3>
+        <p class="inquiry-meta">${data.created_at.slice(0,10)} &nbsp; ${esc(data.author)}</p>
+      </div>`;
+    pwBox.style.display = '';
+    document.getElementById('inquiry-pw-err').textContent = '';
+    document.getElementById('inquiry-pw-input').value = '';
+    document.getElementById('inquiry-pw-input').focus();
+  }
+
+  function showDetailError(msg) {
+    document.getElementById('inquiry-content').innerHTML = `<p class="board-empty">${esc(msg)}</p>`;
+    document.getElementById('inquiry-pw-box').style.display = 'none';
+  }
+
+  function renderDetail(data) {
+    const contentEl = document.getElementById('inquiry-content');
+    const pwBox     = document.getElementById('inquiry-pw-box');
+    pwBox.style.display = 'none';
+
+    const repliesHtml = data.replies && data.replies.length
+      ? data.replies.map(r => `
+          <div class="inquiry-reply">
+            <p class="inquiry-reply-label">관리자 답변 &nbsp;<span class="inquiry-reply-date">${r.created_at.slice(0,10)}</span></p>
+            <p class="inquiry-reply-body">${esc(r.body).replace(/\n/g, '<br>')}</p>
+          </div>`).join('')
+      : '';
+
+    contentEl.innerHTML = `
+      <div class="inquiry-header">
+        <span class="inquiry-cat-label">${esc(CAT_LABELS[data.category] || data.category)}</span>
+        <h3 class="inquiry-title">${esc(data.title)}</h3>
+        <p class="inquiry-meta">${data.created_at.slice(0,10)} &nbsp; ${esc(data.author)}</p>
+      </div>
+      <div class="inquiry-body">${esc(data.body).replace(/\n/g, '<br>')}</div>
+      ${repliesHtml}`;
+  }
+
+  // 비밀번호 제출
+  document.getElementById('inquiry-pw-submit').addEventListener('click', submitPassword);
+  document.getElementById('inquiry-pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitPassword();
+  });
+
+  async function submitPassword() {
+    if (pwLockTimer) return;
+    const pw  = document.getElementById('inquiry-pw-input').value;
+    const errEl = document.getElementById('inquiry-pw-err');
+    if (!pw) { errEl.textContent = '비밀번호를 입력해주세요.'; return; }
+
+    const res = await apiFetch(`${API}/inquiries.php?action=verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: currentInquiryId, password: pw }),
+    });
+
+    if (res.ok) {
+      renderDetail(res.data);
+    } else {
+      pwFailCount++;
+      if (pwFailCount >= 3) {
+        errEl.textContent = '비밀번호를 3회 이상 틀렸습니다. 5초 후 다시 시도하세요.';
+        document.getElementById('inquiry-pw-submit').disabled = true;
+        document.getElementById('inquiry-pw-input').disabled  = true;
+        pwLockTimer = setTimeout(() => {
+          pwLockTimer = null;
+          pwFailCount = 0;
+          document.getElementById('inquiry-pw-submit').disabled = false;
+          document.getElementById('inquiry-pw-input').disabled  = false;
+          errEl.textContent = '';
+        }, 5000);
+      } else {
+        errEl.textContent = `비밀번호가 올바르지 않습니다. (${pwFailCount}/3)`;
+        document.getElementById('inquiry-pw-input').value = '';
+        document.getElementById('inquiry-pw-input').focus();
+      }
+    }
+  }
+
+  // 목록으로 돌아가기
+  document.getElementById('inquiry-back').addEventListener('click', () => {
+    currentInquiryId = null;
+    pwFailCount = 0;
+    clearTimeout(pwLockTimer);
+    pwLockTimer = null;
+    hideDetail();
+  });
+
+  // ── 문의 작성 ─────────────────────────────────────────
+  document.getElementById('board-write-btn').addEventListener('click', () => {
+    if (!currentUser) {
+      const returnUrl = encodeURIComponent(location.pathname + '#board');
+      location.href = `/login.html?return=${returnUrl}`;
+      return;
+    }
+    document.getElementById('inquiry-form').style.display = '';
+    document.getElementById('board-list').style.display   = 'none';
+    document.getElementById('board-actions').style.display = 'none';
+    document.getElementById('board-cats').style.display   = 'none';
+    document.getElementById('board-more-wrap').style.display = 'none';
+    document.getElementById('inq-title').focus();
+  });
+
+  document.getElementById('inq-cancel').addEventListener('click', () => {
+    document.getElementById('inquiry-form').style.display = 'none';
+    document.getElementById('board-list').style.display   = '';
+    document.getElementById('board-actions').style.display = '';
+    document.getElementById('board-cats').style.display   = '';
+  });
+
+  document.getElementById('inq-submit').addEventListener('click', async () => {
+    const cat   = document.getElementById('inq-cat').value;
+    const title = document.getElementById('inq-title').value.trim();
+    const body  = document.getElementById('inq-body').value.trim();
+    const pw    = document.getElementById('inq-pw').value;
+    const errEl = document.getElementById('inq-err');
+    errEl.textContent = '';
+
+    if (!title) { errEl.textContent = '제목을 입력해주세요.'; return; }
+    if (!body)  { errEl.textContent = '내용을 입력해주세요.'; return; }
+    if (pw.length < 4) { errEl.textContent = '비밀번호는 4자 이상이어야 합니다.'; return; }
+
+    const btn = document.getElementById('inq-submit');
+    btn.disabled = true;
+    btn.textContent = '등록 중...';
+
+    const res = await apiFetch(`${API}/inquiries.php?action=create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: cat, title, body, password: pw }),
+    });
+
+    btn.disabled = false;
+    btn.textContent = '문의 등록';
+
+    if (res.ok) {
+      document.getElementById('inq-title').value = '';
+      document.getElementById('inq-body').value  = '';
+      document.getElementById('inq-pw').value    = '';
+      document.getElementById('inquiry-form').style.display = 'none';
+      document.getElementById('board-actions').style.display = '';
+      document.getElementById('board-cats').style.display   = '';
+      fetchList(1);
+    } else {
+      errEl.textContent = res.error || '등록에 실패했습니다.';
+    }
+  });
+
+  // ── 유틸 ──────────────────────────────────────────────
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── 초기 탭 설정 ────────────────────────────────────────
+  activateTab(location.hash.replace('#', '') || 'faq');
+})();
+</script>
+<script src="/js/nav.js"></script>
+<script src="/js/cursor.js"></script>
+<div id="ship-cursor"></div>
+</body>
+</html>

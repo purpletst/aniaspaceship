@@ -42,7 +42,7 @@
     <a href="/collection.html" class="h-menu-item">COLLECTION</a>
     <a href="/about.html" class="h-menu-item">ABOUT</a>
     <hr class="h-divider">
-    <a href="#" class="h-menu-item">CONTACT</a>
+    <a href="/helpdesk.html" class="h-menu-item">HELPDESK</a>
     <a href="#" class="h-menu-item">INSTAGRAM</a>
     <hr class="h-divider">
     <a href="/cart.html" class="h-menu-item">장바구니 <span class="nav-cart-count">(0)</span></a>
@@ -76,7 +76,7 @@
     <a href="/privacy.html">PRIVACY</a>
     <a href="/agreement.html">AGREEMENT</a>
     ${info.instagram ? `<a href="${info.instagram}" target="_blank" rel="noopener">INSTAGRAM</a>` : ''}
-    ${info.email     ? `<a href="mailto:${info.email}">CONTACT</a>` : ''}
+    <a href="/helpdesk.html">CONTACT</a>
   </nav>
   <div class="footer-legal">COPYRIGHT &copy; ${year} ${(SITE.brand_en || SITE.brand).toUpperCase()}</div>
   <div class="footer-biz">${bizParts}</div>
