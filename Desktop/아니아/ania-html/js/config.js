@@ -5,7 +5,18 @@ const API = '/api';
 
 const SITE = {
   brand: '아니아',
+  brand_en: 'ANIA',
   season: '26 F/W',
+  // ✏️ 사업자 정보 — 푸터/개인정보방침/약관에 공통 사용
+  info: {
+    ceo:        '박지환',
+    license:    '501-04-31493',
+    online_reg: '',   // 통신판매업신고번호 — 신고 후 입력
+    address:    '서울특별시 서대문구 가재울미래로 2, 281호/201호',
+    email:      'jihwan1124@gmail.com',
+    phone:      '02-0000-0000',
+    instagram:  'https://www.instagram.com/ania_not_ani/',
+  },
   nav: {
     bg: '#fff',
     // ✏️ 메뉴 항목 편집: label에 텍스트 또는 <img> 태그 모두 사용 가능
@@ -42,6 +53,25 @@ const SEED_PRODUCTS = (function () {
     const local = JSON.parse(localStorage.getItem('aniaLocalProducts') || '[]');
     return local.length ? local : _DEFAULT_PRODUCTS;
   } catch { return _DEFAULT_PRODUCTS; }
+})();
+
+// ── 시즌 아카이브 (컬렉션 페이지) ────────────────────────────
+// admin-seasons.html이 localStorage 'aniaLocalSeasons'에 저장
+// 폴백: localStorage → 기본 시드
+const _DEFAULT_SEASONS = [
+  {
+    slug:     '26fw',
+    label:    '26 F/W',
+    title:    '지구인으로 살아남기 가이드',
+    title_en: 'GUIDE TO SURVIVING AS AN EARTHLING',
+    photos:   [],  // { url: '...', caption: '...' }
+  },
+];
+const SEASONS = (function () {
+  try {
+    const local = JSON.parse(localStorage.getItem('aniaLocalSeasons') || '[]');
+    return local.length ? local : _DEFAULT_SEASONS;
+  } catch { return _DEFAULT_SEASONS; }
 })();
 
 function fmtPrice(n) {

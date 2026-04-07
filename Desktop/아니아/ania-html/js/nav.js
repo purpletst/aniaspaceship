@@ -56,6 +56,33 @@
 </div>`;
   }
 
+  // ── Inject footer ──
+  (function () {
+    const info = SITE.info;
+    const year = new Date().getFullYear();
+    const bizParts = [
+      `<span>${SITE.brand_en || SITE.brand.toUpperCase()}</span>`,
+      `<span>CEO. ${info.ceo}</span>`,
+      info.license    ? `<span>사업자등록번호. ${info.license}</span>` : '',
+      info.online_reg ? `<span>통신판매업신고. ${info.online_reg}</span>` : '',
+      info.email      ? `<span>이메일. <a href="mailto:${info.email}">${info.email}</a></span>` : '',
+      info.phone      ? `<span>${info.phone}</span>` : '',
+      info.address    ? `<span>${info.address}</span>` : '',
+    ].filter(Boolean).join(' | ');
+
+    document.body.insertAdjacentHTML('beforeend', `
+<footer class="site-footer">
+  <nav class="footer-links">
+    <a href="/privacy.html">PRIVACY</a>
+    <a href="/agreement.html">AGREEMENT</a>
+    ${info.instagram ? `<a href="${info.instagram}" target="_blank" rel="noopener">INSTAGRAM</a>` : ''}
+    ${info.email     ? `<a href="mailto:${info.email}">CONTACT</a>` : ''}
+  </nav>
+  <div class="footer-legal">COPYRIGHT &copy; ${year} ${(SITE.brand_en || SITE.brand).toUpperCase()}</div>
+  <div class="footer-biz">${bizParts}</div>
+</footer>`);
+  })();
+
   // ── Inject search modal ──
   document.body.insertAdjacentHTML('beforeend', `
 <div class="search-overlay" id="search-overlay" style="display:none">

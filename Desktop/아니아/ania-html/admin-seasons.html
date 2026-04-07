@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시즌 관리 — 아니아 Admin</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Tahoma', sans-serif; background: #f5f5f5; color: #222; }
+  .admin-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 20px; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .sub { font-size: 12px; color: #888; margin-bottom: 32px; }
+  .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 13px; letter-spacing: 0.08em; margin-bottom: 16px; text-transform: uppercase; }
+  label { display: block; font-size: 11px; letter-spacing: 0.06em; color: #555; margin-bottom: 4px; margin-top: 12px; text-transform: uppercase; }
+  label:first-child { margin-top: 0; }
+  input[type=text], textarea { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 3px; font-family: inherit; }
+  textarea { height: 70px; resize: vertical; }
+  .btn { display: inline-block; padding: 9px 20px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border: 1px solid #222; background: #222; color: #fff; border-radius: 3px; font-family: inherit; }
+  .btn:hover { background: #444; }
+  .btn-outline { background: #fff; color: #222; }
+  .btn-outline:hover { background: #f5f5f5; }
+  .btn-danger { background: #c00; border-color: #c00; }
+  .btn-danger:hover { background: #a00; }
+  .btn-sm { padding: 5px 12px; font-size: 10px; }
+  .season-list { list-style: none; }
+  .season-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+  .season-item:last-child { border-bottom: none; }
+  .season-label { font-size: 13px; font-weight: bold; min-width: 80px; }
+  .season-title { font-size: 12px; color: #666; flex: 1; }
+  .season-count { font-size: 11px; color: #aaa; }
+  .photo-list { list-style: none; margin-top: 16px; }
+  .photo-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+  .photo-item:last-child { border-bottom: none; }
+  .photo-thumb { width: 50px; height: 65px; object-fit: cover; border: 1px solid #e0e0e0; border-radius: 2px; background: #f5f5f5; }
+  .photo-thumb-placeholder { width: 50px; height: 65px; background: #eee; border: 1px solid #e0e0e0; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa; text-align: center; }
+  .photo-url { font-size: 11px; color: #888; flex: 1; word-break: break-all; }
+  .photo-caption { font-size: 11px; color: #555; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .editor { display: none; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 4px; padding: 20px; margin-top: 16px; }
+  .editor.open { display: block; }
+  .row { display: flex; gap: 12px; }
+  .row > * { flex: 1; }
+  .msg { font-size: 12px; padding: 8px 12px; border-radius: 3px; margin-top: 8px; display: none; }
+  .msg.ok { background: #e8f5e9; color: #2e7d32; display: block; }
+  .msg.err { background: #ffebee; color: #c62828; display: block; }
+  .export-box { margin-top: 12px; }
+  textarea.export-ta { height: 120px; font-size: 11px; font-family: monospace; background: #f9f9f9; }
+  .divider { border: none; border-top: 1px solid #e0e0e0; margin: 32px 0; }
+  .empty { font-size: 13px; color: #aaa; padding: 16px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <h1>시즌 관리</h1>
+  <p class="sub">컬렉션 페이지에 표시되는 시즌 아카이브를 관리합니다. 데이터는 브라우저 localStorage에 저장됩니다.</p>
+
+  <!-- 시즌 목록 -->
+  <div class="card">
+    <h2>시즌 목록</h2>
+    <ul class="season-list" id="season-list">
+      <li class="empty">불러오는 중...</li>
+    </ul>
+    <div class="actions">
+      <button class="btn btn-outline" onclick="openAddSeason()">+ 시즌 추가</button>
+      <button class="btn btn-outline" onclick="resetToDefault()">기본값으로 초기화</button>
+    </div>
+    <!-- 시즌 추가 에디터 -->
+    <div class="editor" id="add-season-editor">
+      <h2 style="margin-bottom:16px">새 시즌 추가</h2>
+      <div class="row">
+        <div>
+          <label>슬러그 (영문, 하이픈, 숫자만)</label>
+          <input type="text" id="new-slug" placeholder="예: 27ss">
+        </div>
+        <div>
+          <label>레이블 (탭에 표시)</label>
+          <input type="text" id="new-label" placeholder="예: 27 S/S">
+        </div>
+      </div>
+      <label>타이틀 (한국어)</label>
+      <input type="text" id="new-title" placeholder="예: 봄날의 지구인">
+      <label>타이틀 (영어)</label>
+      <input type="text" id="new-title-en" placeholder="예: EARTHLING IN SPRING">
+      <div class="actions" style="margin-top:16px">
+        <button class="btn" onclick="addSeason()">추가</button>
+        <button class="btn btn-outline" onclick="closeAddSeason()">취소</button>
+      </div>
+      <p class="msg" id="add-season-msg"></p>
+    </div>
+  </div>
+
+  <!-- 시즌 선택 → 사진 관리 -->
+  <div class="card" id="photo-card" style="display:none">
+    <h2 id="photo-card-title">사진 관리</h2>
+
+    <ul class="photo-list" id="photo-list">
+      <li class="empty">사진이 없습니다.</li>
+    </ul>
+
+    <div class="actions">
+      <button class="btn btn-outline" onclick="openAddPhoto()">+ 사진 추가</button>
+    </div>
+
+    <!-- 사진 추가 에디터 -->
+    <div class="editor" id="add-photo-editor">
+      <h2 style="margin-bottom:16px">사진 추가</h2>
+      <label>이미지 URL</label>
+      <input type="text" id="new-photo-url" placeholder="/assets/uploads/photo.jpg 또는 외부 URL">
+      <label>캡션 (선택)</label>
+      <input type="text" id="new-photo-caption" placeholder="사진 설명 (선택사항)">
+      <div class="actions" style="margin-top:16px">
+        <button class="btn" onclick="addPhoto()">추가</button>
+        <button class="btn btn-outline" onclick="closeAddPhoto()">취소</button>
+      </div>
+      <p class="msg" id="add-photo-msg"></p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 데이터 내보내기/가져오기 -->
+  <div class="card">
+    <h2>데이터 내보내기 / 가져오기</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">JSON을 복사해 다른 기기에 붙여넣거나, 백업으로 보관하세요.</p>
+    <button class="btn btn-outline btn-sm" onclick="exportData()">JSON 내보내기</button>
+    <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-editor').classList.toggle('open')">JSON 가져오기</button>
+    <div class="export-box" id="export-box" style="display:none">
+      <label style="margin-top:12px">내보낸 데이터 (복사하세요)</label>
+      <textarea class="export-ta" id="export-ta" readonly></textarea>
+    </div>
+    <div class="editor" id="import-editor">
+      <label>JSON 붙여넣기</label>
+      <textarea class="export-ta" id="import-ta" placeholder='[{"slug":"26fw","label":"26 F/W",...}]'></textarea>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" onclick="importData()">가져오기 (덮어쓰기)</button>
+      </div>
+      <p class="msg" id="import-msg"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS_KEY = 'aniaLocalSeasons';
+
+const _DEFAULT_SEASONS = [
+  {
+    slug: '26fw',
+    label: '26 F/W',
+    title: '지구인으로 살아남기 가이드',
+    title_en: 'GUIDE TO SURVIVING AS AN EARTHLING',
+    photos: [],
+  },
+];
+
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    return d.length ? d : JSON.parse(JSON.stringify(_DEFAULT_SEASONS));
+  } catch { return JSON.parse(JSON.stringify(_DEFAULT_SEASONS)); }
+}
+
+function save(data) {
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+}
+
+let seasons = load();
+let activeSlug = null;
+
+// ── 시즌 목록 렌더 ──
+function renderSeasonList() {
+  const ul = document.getElementById('season-list');
+  if (!seasons.length) {
+    ul.innerHTML = '<li class="empty">시즌이 없습니다. 추가하세요.</li>';
+    return;
+  }
+  ul.innerHTML = seasons.map((s, i) => `
+    <li class="season-item">
+      <span class="season-label">${esc(s.label)}</span>
+      <span class="season-title">${esc(s.title || '')}${s.title_en ? ' / ' + esc(s.title_en) : ''}</span>
+      <span class="season-count">${(s.photos || []).length}장</span>
+      <button class="btn btn-outline btn-sm" onclick="selectSeason('${esc(s.slug)}')">사진 관리</button>
+      <button class="btn btn-outline btn-sm" onclick="editSeason(${i})">편집</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSeason(${i})">삭제</button>
+    </li>`).join('');
+}
+
+// ── 시즌 선택 → 사진 관리 ──
+function selectSeason(slug) {
+  activeSlug = slug;
+  const s = seasons.find(s => s.slug === slug);
+  if (!s) return;
+  document.getElementById('photo-card').style.display = 'block';
+  document.getElementById('photo-card-title').textContent = `${s.label} — 사진 관리`;
+  renderPhotoList(s);
+  document.getElementById('photo-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderPhotoList(s) {
+  const ul = document.getElementById('photo-list');
+  const photos = s.photos || [];
+  if (!photos.length) {
+    ul.innerHTML = '<li class="empty">사진이 없습니다.</li>';
+    return;
+  }
+  ul.innerHTML = photos.map((p, i) => `
+    <li class="photo-item">
+      ${p.url ? `<img class="photo-thumb" src="${esc(p.url)}" alt="" onerror="this.style.display='none'">` : `<div class="photo-thumb-placeholder">No<br>Image</div>`}
+      <div style="flex:1">
+        <div class="photo-url">${esc(p.url || '')}</div>
+        ${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="movePhoto(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+      <button class="btn btn-outline btn-sm" onclick="movePhoto(${i}, 1)" ${i === photos.length - 1 ? 'disabled' : ''}>▼</button>
+      <button class="btn btn-danger btn-sm" onclick="deletePhoto(${i})">삭제</button>
+    </li>`).join('');
+}
+
+// ── 시즌 추가 ──
+function openAddSeason() {
+  document.getElementById('add-season-editor').classList.add('open');
+}
+function closeAddSeason() {
+  document.getElementById('add-season-editor').classList.remove('open');
+  ['new-slug','new-label','new-title','new-title-en'].forEach(id => document.getElementById(id).value = '');
+}
+function addSeason() {
+  const slug     = document.getElementById('new-slug').value.trim().replace(/[^a-z0-9-]/g,'');
+  const label    = document.getElementById('new-label').value.trim();
+  const title    = document.getElementById('new-title').value.trim();
+  const title_en = document.getElementById('new-title-en').value.trim();
+  const msg = document.getElementById('add-season-msg');
+
+  if (!slug || !label) { showMsg(msg, '슬러그와 레이블은 필수입니다.', 'err'); return; }
+  if (seasons.find(s => s.slug === slug)) { showMsg(msg, '이미 존재하는 슬러그입니다.', 'err'); return; }
+
+  seasons.unshift({ slug, label, title, title_en, photos: [] });
+  save(seasons);
+  renderSeasonList();
+  closeAddSeason();
+  showMsg(msg, '추가되었습니다.', 'ok');
+}
+
+// ── 시즌 편집 ──
+function editSeason(i) {
+  const s = seasons[i];
+  const newLabel = prompt('레이블:', s.label);
+  if (newLabel === null) return;
+  const newTitle = prompt('타이틀 (한국어):', s.title || '');
+  if (newTitle === null) return;
+  const newTitleEn = prompt('타이틀 (영어):', s.title_en || '');
+  if (newTitleEn === null) return;
+
+  seasons[i] = { ...s, label: newLabel.trim(), title: newTitle.trim(), title_en: newTitleEn.trim() };
+  save(seasons);
+  renderSeasonList();
+  if (activeSlug === s.slug) {
+    document.getElementById('photo-card-title').textContent = `${seasons[i].label} — 사진 관리`;
+  }
+}
+
+// ── 시즌 삭제 ──
+function deleteSeason(i) {
+  const s = seasons[i];
+  if (!confirm(`'${s.label}' 시즌과 사진 ${(s.photos||[]).length}장을 삭제합니다. 계속하시겠습니까?`)) return;
+  seasons.splice(i, 1);
+  save(seasons);
+  renderSeasonList();
+  if (activeSlug === s.slug) {
+    activeSlug = null;
+    document.getElementById('photo-card').style.display = 'none';
+  }
+}
+
+// ── 사진 추가 ──
+function openAddPhoto() {
+  document.getElementById('add-photo-editor').classList.add('open');
+}
+function closeAddPhoto() {
+  document.getElementById('add-photo-editor').classList.remove('open');
+  document.getElementById('new-photo-url').value = '';
+  document.getElementById('new-photo-caption').value = '';
+}
+function addPhoto() {
+  const url     = document.getElementById('new-photo-url').value.trim();
+  const caption = document.getElementById('new-photo-caption').value.trim();
+  const msg     = document.getElementById('add-photo-msg');
+
+  if (!url) { showMsg(msg, 'URL을 입력하세요.', 'err'); return; }
+
+  const s = seasons.find(s => s.slug === activeSlug);
+  if (!s) return;
+  if (!s.photos) s.photos = [];
+  s.photos.push({ url, caption });
+  save(seasons);
+  renderPhotoList(s);
+  closeAddPhoto();
+  showMsg(msg, '추가되었습니다.', 'ok');
+  renderSeasonList();
+}
+
+// ── 사진 순서 변경 ──
+function movePhoto(i, dir) {
+  const s = seasons.find(s => s.slug === activeSlug);
+  if (!s) return;
+  const j = i + dir;
+  if (j < 0 || j >= s.photos.length) return;
+  [s.photos[i], s.photos[j]] = [s.photos[j], s.photos[i]];
+  save(seasons);
+  renderPhotoList(s);
+  renderSeasonList();
+}
+
+// ── 사진 삭제 ──
+function deletePhoto(i) {
+  const s = seasons.find(s => s.slug === activeSlug);
+  if (!s) return;
+  if (!confirm('이 사진을 삭제하시겠습니까?')) return;
+  s.photos.splice(i, 1);
+  save(seasons);
+  renderPhotoList(s);
+  renderSeasonList();
+}
+
+// ── 초기화 ──
+function resetToDefault() {
+  if (!confirm('모든 시즌 데이터를 기본값으로 초기화합니다. 계속하시겠습니까?')) return;
+  localStorage.removeItem(LS_KEY);
+  seasons = JSON.parse(JSON.stringify(_DEFAULT_SEASONS));
+  activeSlug = null;
+  document.getElementById('photo-card').style.display = 'none';
+  renderSeasonList();
+}
+
+// ── 내보내기 ──
+function exportData() {
+  const box = document.getElementById('export-box');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('export-ta').value = JSON.stringify(seasons, null, 2);
+}
+
+// ── 가져오기 ──
+function importData() {
+  const raw = document.getElementById('import-ta').value.trim();
+  const msg = document.getElementById('import-msg');
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) throw new Error('배열이 아닙니다');
+    seasons = data;
+    save(seasons);
+    renderSeasonList();
+    document.getElementById('import-editor').classList.remove('open');
+    document.getElementById('import-ta').value = '';
+    showMsg(msg, '가져오기 완료!', 'ok');
+  } catch(e) {
+    showMsg(msg, 'JSON 형식 오류: ' + e.message, 'err');
+  }
+}
+
+// ── 유틸 ──
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showMsg(el, text, type) {
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  setTimeout(() => { el.className = 'msg'; }, 3000);
+}
+
+// ── 초기 렌더 ──
+renderSeasonList();
+</script>
+</body>
+</html>
