@@ -57,20 +57,30 @@ const SEED_PRODUCTS = (function () {
 
 // ── 시즌 아카이브 (컬렉션 페이지) ────────────────────────────
 // admin-seasons.html이 localStorage 'aniaLocalSeasons'에 저장
-// 폴백: localStorage → 기본 시드
+// 병합 규칙: localStorage 시즌 데이터 우선 사용;
+//            photos 배열이 비어있는 시즌은 _DEFAULT_SEASONS의 기본 사진으로 보충
 const _DEFAULT_SEASONS = [
   {
     slug:     '26fw',
     label:    '26 F/W',
     title:    '지구인으로 살아남기 가이드',
     title_en: 'GUIDE TO SURVIVING AS AN EARTHLING',
-    photos:   [],  // { url: '...', caption: '...' }
+    photos:   [
+      { url: '/assets/hero-moodboard.png',  caption: '26 F/W — 지구인으로 살아남기 가이드' },
+      { url: '/assets/character-base.png',  caption: '아니아 캐릭터 — 26 F/W' },
+    ],
   },
 ];
 const SEASONS = (function () {
   try {
     const local = JSON.parse(localStorage.getItem('aniaLocalSeasons') || '[]');
-    return local.length ? local : _DEFAULT_SEASONS;
+    if (!local.length) return _DEFAULT_SEASONS;
+    // photos 없는 시즌에 한해 기본 사진 보충 (slug 매칭)
+    return local.map(function (s) {
+      if (s.photos && s.photos.length) return s;
+      var def = _DEFAULT_SEASONS.find(function (d) { return d.slug === s.slug; });
+      return (def && def.photos.length) ? Object.assign({}, s, { photos: def.photos }) : s;
+    });
   } catch { return _DEFAULT_SEASONS; }
 })();
 
