@@ -30,9 +30,11 @@ if ($action === 'list' || $action === 'search') {
         $stmt = db()->prepare($sql);
         $stmt->execute($params);
         $rows = $stmt->fetchAll();
-        // Decode images JSON
+        // Decode JSON columns
         foreach ($rows as &$r) {
-            $r['images'] = $r['images'] ? json_decode($r['images'], true) : [];
+            $r['images']        = $r['images']        ? json_decode($r['images'],        true) : [];
+            $r['detail_images'] = $r['detail_images'] ? json_decode($r['detail_images'], true) : [];
+            $r['sizes']         = $r['sizes']         ? json_decode($r['sizes'],         true) : null;
         }
         json_ok($rows);
     } catch (Exception $e) {
@@ -49,7 +51,9 @@ if ($action === 'single') {
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         if (!$row) json_err('상품을 찾을 수 없습니다.', 404);
-        $row['images'] = $row['images'] ? json_decode($row['images'], true) : [];
+        $row['images']        = $row['images']        ? json_decode($row['images'],        true) : [];
+        $row['detail_images'] = $row['detail_images'] ? json_decode($row['detail_images'], true) : [];
+        $row['sizes']         = $row['sizes']         ? json_decode($row['sizes'],         true) : null;
         json_ok($row);
     } catch (Exception $e) {
         json_err($e->getMessage(), 500);
@@ -61,22 +65,27 @@ if ($action === 'create' && $method === 'POST') {
     require_admin();
     $b = json_decode(file_get_contents('php://input'), true) ?? [];
     try {
+        $sizes = $b['sizes'] ?? null;
         $stmt = db()->prepare(
-            'INSERT INTO products (name,name_ko,price,description,images,category,stock,is_available) VALUES (?,?,?,?,?,?,?,?)'
+            'INSERT INTO products (name,name_ko,price,description,images,detail_images,sizes,category,stock,is_available) VALUES (?,?,?,?,?,?,?,?,?,?)'
         );
         $stmt->execute([
             $b['name']         ?? '',
             $b['name_ko']      ?? null,
             (int)($b['price']  ?? 0),
             $b['description']  ?? null,
-            json_encode($b['images'] ?? [], JSON_UNESCAPED_UNICODE),
+            json_encode($b['images']        ?? [], JSON_UNESCAPED_UNICODE),
+            json_encode($b['detail_images'] ?? [], JSON_UNESCAPED_UNICODE),
+            (is_array($sizes) && count($sizes)) ? json_encode($sizes, JSON_UNESCAPED_UNICODE) : null,
             $b['category']     ?? 'etc',
             (int)($b['stock']  ?? 100),
             (int)($b['is_available'] ?? 1),
         ]);
         $newId = (int)db()->lastInsertId();
         $row   = db()->query("SELECT * FROM products WHERE id = $newId")->fetch();
-        $row['images'] = json_decode($row['images'], true);
+        $row['images']        = json_decode($row['images'],        true);
+        $row['detail_images'] = $row['detail_images'] ? json_decode($row['detail_images'], true) : [];
+        $row['sizes']         = $row['sizes']         ? json_decode($row['sizes'],         true) : null;
         json_ok($row);
     } catch (Exception $e) {
         json_err($e->getMessage(), 500);
@@ -90,13 +99,16 @@ if ($action === 'update' && $method === 'POST') {
     $id = (int)($b['id'] ?? 0);
     if (!$id) json_err('id 필요');
     try {
+        $sizes = $b['sizes'] ?? null;
         $stmt = db()->prepare(
-            'UPDATE products SET name=?,name_ko=?,price=?,description=?,images=?,category=?,stock=?,is_available=? WHERE id=?'
+            'UPDATE products SET name=?,name_ko=?,price=?,description=?,images=?,detail_images=?,sizes=?,category=?,stock=?,is_available=? WHERE id=?'
         );
         $stmt->execute([
             $b['name'], $b['name_ko'] ?? null, (int)$b['price'],
             $b['description'] ?? null,
-            json_encode($b['images'] ?? [], JSON_UNESCAPED_UNICODE),
+            json_encode($b['images']        ?? [], JSON_UNESCAPED_UNICODE),
+            json_encode($b['detail_images'] ?? [], JSON_UNESCAPED_UNICODE),
+            (is_array($sizes) && count($sizes)) ? json_encode($sizes, JSON_UNESCAPED_UNICODE) : null,
             $b['category'] ?? 'etc', (int)$b['stock'], (int)$b['is_available'], $id,
         ]);
         json_ok(null);

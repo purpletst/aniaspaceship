@@ -1,0 +1,4 @@
+# 아니아 — 카페24 공유호스팅 PHP 설정
+php_value upload_max_filesize 20M
+php_value post_max_size 22M
+php_value memory_limit 64M

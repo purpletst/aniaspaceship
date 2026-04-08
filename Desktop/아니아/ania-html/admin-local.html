@@ -32,6 +32,7 @@
         <th>상품명 (KO)</th>
         <th>카테고리</th>
         <th>가격</th>
+        <th>사이즈</th>
         <th>재고</th>
         <th>판매중</th>
         <th>관리</th>
@@ -85,13 +86,35 @@
           <option value="0">품절/비활성</option>
         </select>
       </div>
+      <!-- 사이즈 -->
       <div class="modal-field full-width">
-        <label>이미지</label>
-        <div id="img-grid" class="img-grid"></div>
-        <input type="file" id="img-file-input"
+        <label>판매 사이즈 <span style="font-weight:normal;color:#aaa;font-size:10px">(선택 안 함 = 전체)</span></label>
+        <div class="local-size-checks" id="f-sizes">
+          <label class="local-size-label"><input type="checkbox" value="XS"> XS</label>
+          <label class="local-size-label"><input type="checkbox" value="S"> S</label>
+          <label class="local-size-label"><input type="checkbox" value="M"> M</label>
+          <label class="local-size-label"><input type="checkbox" value="L"> L</label>
+          <label class="local-size-label"><input type="checkbox" value="XL"> XL</label>
+          <label class="local-size-label"><input type="checkbox" value="FREE"> FREE</label>
+        </div>
+      </div>
+      <!-- 대표 이미지 -->
+      <div class="modal-field full-width">
+        <label>대표 이미지 <span style="font-weight:normal;color:#aaa;font-size:10px">쇼핑몰 목록 + 상품 상단</span></label>
+        <div id="thumb-grid" class="img-grid"></div>
+        <input type="file" id="thumb-file-input"
           accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
-        <button type="button" id="img-add-btn" class="btn-img-add">+ 이미지 추가</button>
-        <p id="img-upload-msg" style="font-size:11px;color:#888;margin-top:4px"></p>
+        <button type="button" id="thumb-add-btn" class="btn-img-add">+ 대표 이미지 추가</button>
+        <p id="thumb-upload-msg" style="font-size:11px;color:#888;margin-top:4px"></p>
+      </div>
+      <!-- 상세 이미지 -->
+      <div class="modal-field full-width">
+        <label>상세 이미지 <span style="font-weight:normal;color:#aaa;font-size:10px">상품 페이지 하단 에디토리얼</span></label>
+        <div id="detail-grid" class="img-grid"></div>
+        <input type="file" id="detail-file-input"
+          accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+        <button type="button" id="detail-add-btn" class="btn-img-add">+ 상세 이미지 추가</button>
+        <p id="detail-upload-msg" style="font-size:11px;color:#888;margin-top:4px"></p>
       </div>
       <div class="modal-field full-width">
         <label>상품 설명</label>
@@ -107,45 +130,65 @@
 
 <script src="/js/config.js"></script>
 <script>
-const CATS = { tops:'TOPS', outerwear:'OUTERWEAR', bottoms:'BOTTOMS', dresses:'DRESSES', accessories:'ACCESSORIES', etc:'ETC' };
-let editingIdx = null;
-let modalImages = [];
+const CATS     = { tops:'TOPS', outerwear:'OUTERWEAR', bottoms:'BOTTOMS', dresses:'DRESSES', accessories:'ACCESSORIES', etc:'ETC' };
+const ALL_SIZES = ['XS','S','M','L','XL','FREE'];
+let editingIdx       = null;
+let modalThumbs      = [];   // 대표 이미지
+let modalDetailImgs  = [];   // 상세 이미지
 
-function renderImgGrid() {
-  const grid = document.getElementById('img-grid');
-  if (!modalImages.length) {
+// ── 공통 이미지 그리드 렌더 ──────────────────────────────
+function renderImgGrid(gridId, arr) {
+  const grid = document.getElementById(gridId);
+  if (!arr.length) {
     grid.innerHTML = '<p style="font-size:11px;color:#aaa;padding:8px 0">이미지 없음</p>';
     return;
   }
-  grid.innerHTML = modalImages.map((url, i) => `
+  grid.innerHTML = arr.map((url, i) => `
     <div class="img-thumb-wrap">
       <img src="${url}" alt="" onerror="this.style.display='none'">
-      <button type="button" class="img-thumb-del" data-i="${i}">✕</button>
+      <button type="button" class="img-thumb-del" data-grid="${gridId}" data-i="${i}">✕</button>
     </div>`).join('');
   grid.querySelectorAll('.img-thumb-del').forEach(btn => {
     btn.addEventListener('click', () => {
-      modalImages.splice(Number(btn.dataset.i), 1);
-      renderImgGrid();
+      const target = btn.dataset.grid === 'thumb-grid' ? modalThumbs : modalDetailImgs;
+      target.splice(Number(btn.dataset.i), 1);
+      renderImgGrid(btn.dataset.grid, target);
     });
   });
 }
 
-document.getElementById('img-add-btn').addEventListener('click', () => {
-  document.getElementById('img-file-input').click();
-});
-document.getElementById('img-file-input').addEventListener('change', async function() {
-  const file = this.files[0];
-  if (!file) return;
-  const msgEl = document.getElementById('img-upload-msg');
+// ── 공통 업로드 핸들러 ────────────────────────────────────
+async function handleImgUpload(file, gridId, arr, msgId) {
+  const msgEl = document.getElementById(msgId);
   msgEl.textContent = '업로드 중...';
-  this.value = '';
   const result = await uploadImage(file);
   if (!result.ok) { msgEl.textContent = result.error; return; }
   msgEl.textContent = result.warning || (result.source === 'server' ? '서버 업로드 완료' : '로컬 저장 (base64)');
-  modalImages.push(result.url);
-  renderImgGrid();
+  arr.push(result.url);
+  renderImgGrid(gridId, arr);
+}
+
+// 대표 이미지
+document.getElementById('thumb-add-btn').addEventListener('click', () => {
+  document.getElementById('thumb-file-input').click();
+});
+document.getElementById('thumb-file-input').addEventListener('change', function() {
+  if (!this.files[0]) return;
+  handleImgUpload(this.files[0], 'thumb-grid', modalThumbs, 'thumb-upload-msg');
+  this.value = '';
 });
 
+// 상세 이미지
+document.getElementById('detail-add-btn').addEventListener('click', () => {
+  document.getElementById('detail-file-input').click();
+});
+document.getElementById('detail-file-input').addEventListener('change', function() {
+  if (!this.files[0]) return;
+  handleImgUpload(this.files[0], 'detail-grid', modalDetailImgs, 'detail-upload-msg');
+  this.value = '';
+});
+
+// ── localStorage ──────────────────────────────────────────
 function load() {
   try { return JSON.parse(localStorage.getItem('aniaLocalProducts') || '[]'); }
   catch { return []; }
@@ -157,25 +200,28 @@ function nextId(products) {
   return products.length ? Math.max(...products.map(p => p.id || 0)) + 1 : 1;
 }
 
+// ── 테이블 렌더 ───────────────────────────────────────────
 function renderTable() {
   const products = load();
   document.getElementById('product-count').textContent = `총 ${products.length}개 상품 (localStorage 저장)`;
 
   const tbody = document.getElementById('product-tbody');
   if (!products.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:#888;font-size:11px">상품이 없습니다. 추가 버튼을 눌러 상품을 등록하세요.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#888;font-size:11px">상품이 없습니다. 추가 버튼을 눌러 상품을 등록하세요.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = products.map((p, i) => {
-    const imgs = Array.isArray(p.images) ? p.images : (p.images ? JSON.parse(p.images) : []);
+    const imgs  = Array.isArray(p.images) ? p.images : (p.images ? JSON.parse(p.images) : []);
     const thumb = imgs[0] || '';
+    const sizes = p.sizes ? p.sizes.join(' ') : '—';
     return `<tr>
       <td><div class="admin-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div></td>
       <td>${p.name}</td>
       <td>${p.name_ko || ''}</td>
       <td>${CATS[p.category] || p.category}</td>
       <td>${Number(p.price).toLocaleString('ko-KR')}원</td>
+      <td style="font-size:10px">${sizes}</td>
       <td>${p.stock}</td>
       <td><span class="${p.is_available ? 'badge-on' : 'badge-off'}">${p.is_available ? '판매중' : '비활성'}</span></td>
       <td style="display:flex;gap:6px">
@@ -199,9 +245,20 @@ function renderTable() {
   });
 }
 
+// ── 사이즈 체크박스 헬퍼 ─────────────────────────────────
+function getSizes() {
+  return [...document.querySelectorAll('#f-sizes input:checked')].map(cb => cb.value);
+}
+function setSizes(arr) {
+  document.querySelectorAll('#f-sizes input').forEach(cb => {
+    cb.checked = Array.isArray(arr) && arr.includes(cb.value);
+  });
+}
+
+// ── 모달 열기 ─────────────────────────────────────────────
 function openModal(idx = null) {
   editingIdx = idx;
-  const modal = document.getElementById('modal');
+  const modal    = document.getElementById('modal');
   const products = load();
 
   if (idx !== null) {
@@ -213,9 +270,10 @@ function openModal(idx = null) {
     document.getElementById('f-price').value   = p.price;
     document.getElementById('f-stock').value   = p.stock;
     document.getElementById('f-avail').value   = p.is_available ? '1' : '0';
-    const imgs = Array.isArray(p.images) ? p.images : (p.images ? JSON.parse(p.images) : []);
-    modalImages = [...imgs];
     document.getElementById('f-desc').value    = p.description || '';
+    setSizes(p.sizes || null);
+    modalThumbs     = [...(Array.isArray(p.images)        ? p.images        : [])];
+    modalDetailImgs = [...(Array.isArray(p.detail_images) ? p.detail_images : [])];
   } else {
     document.getElementById('modal-title').textContent = '상품 추가';
     ['f-name','f-name-ko','f-price','f-stock','f-desc'].forEach(id => {
@@ -223,10 +281,15 @@ function openModal(idx = null) {
     });
     document.getElementById('f-cat').value   = 'tops';
     document.getElementById('f-avail').value = '1';
-    modalImages = [];
+    setSizes(null);
+    modalThumbs     = [];
+    modalDetailImgs = [];
   }
-  document.getElementById('img-upload-msg').textContent = '';
-  renderImgGrid();
+  ['thumb-upload-msg','detail-upload-msg'].forEach(id => {
+    document.getElementById(id).textContent = '';
+  });
+  renderImgGrid('thumb-grid',  modalThumbs);
+  renderImgGrid('detail-grid', modalDetailImgs);
   modal.style.display = 'flex';
 }
 
@@ -237,26 +300,28 @@ document.getElementById('modal').addEventListener('click', e => {
   if (e.target === document.getElementById('modal')) document.getElementById('modal').style.display = 'none';
 });
 
+// ── 저장 ──────────────────────────────────────────────────
 document.getElementById('modal-save').addEventListener('click', () => {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('상품명을 입력하세요.'); return; }
 
-  const images = [...modalImages];
-
+  const sizes = getSizes();
   const item = {
     name,
-    name_ko:      document.getElementById('f-name-ko').value.trim(),
-    category:     document.getElementById('f-cat').value,
-    price:        Number(document.getElementById('f-price').value) || 0,
-    stock:        Number(document.getElementById('f-stock').value) || 0,
-    is_available: document.getElementById('f-avail').value === '1' ? 1 : 0,
-    images,
-    description:  document.getElementById('f-desc').value.trim(),
+    name_ko:       document.getElementById('f-name-ko').value.trim(),
+    category:      document.getElementById('f-cat').value,
+    price:         Number(document.getElementById('f-price').value) || 0,
+    stock:         Number(document.getElementById('f-stock').value) || 0,
+    is_available:  document.getElementById('f-avail').value === '1' ? 1 : 0,
+    images:        [...modalThumbs],
+    detail_images: [...modalDetailImgs],
+    sizes:         sizes.length ? sizes : null,
+    description:   document.getElementById('f-desc').value.trim(),
   };
 
   const products = load();
   if (editingIdx !== null) {
-    item.id = products[editingIdx].id;  // 기존 ID 유지
+    item.id = products[editingIdx].id;
     products[editingIdx] = item;
   } else {
     item.id = nextId(products);

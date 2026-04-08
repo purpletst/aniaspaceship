@@ -2,6 +2,14 @@
 /**
  * 아니아 — DB 연결
  * 카페24 배포 시: $host, $name, $user, $pass 를 실제 값으로 변경
+ *
+ * ── [마이그레이션] v2 — 사이즈 + 상세이미지 컬럼 추가 ──────────────
+ * 카페24 phpMyAdmin에서 아래 SQL을 한 번 실행하세요:
+ *
+ * ALTER TABLE products
+ *   ADD COLUMN detail_images TEXT DEFAULT NULL COMMENT '상세 이미지 JSON 배열' AFTER images,
+ *   ADD COLUMN sizes VARCHAR(200) DEFAULT NULL COMMENT '판매 가능 사이즈 JSON 배열 (NULL=전체)' AFTER detail_images;
+ * ─────────────────────────────────────────────────────────────────────
  */
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_NAME', getenv('DB_NAME') ?: 'ania_db');

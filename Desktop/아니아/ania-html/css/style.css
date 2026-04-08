@@ -1042,3 +1042,25 @@ button { font-family: inherit; }
   cursor: pointer; border-radius: 3px; font-family: inherit;
 }
 .btn-img-add:hover { background: #f5f5f5; border-color: #222; }
+
+/* ── 상품 상세 페이지 — 에디토리얼 이미지 ────────────────── */
+.product-detail-images {
+  max-width: 800px;
+  margin: 60px auto 80px;
+  padding: 0 24px;
+}
+.detail-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 4px;
+}
+
+/* ── admin-local 사이즈 체크박스 ─────────────────────────── */
+.local-size-checks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.local-size-label {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; cursor: pointer;
+  padding: 4px 8px; border: 1px solid #ccc;
+}
+.local-size-label input { margin: 0; cursor: pointer; }

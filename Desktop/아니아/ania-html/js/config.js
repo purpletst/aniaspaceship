@@ -38,12 +38,12 @@ const SITE = {
 };
 
 const _DEFAULT_PRODUCTS = [
-  { id:1, name:'SATIN BLOUSE SET',    name_ko:'새틴 블라우스 세트', price:298000, images:['/assets/products/satin-blouse-set.jpeg'],  category:'tops',        is_available:1, stock:10 },
-  { id:2, name:'TRACK JACKET MINT',   name_ko:'트랙 재킷 민트',    price:198000, images:['/assets/products/track-jacket-mint.jpeg'],  category:'outerwear',   is_available:1, stock:5  },
-  { id:3, name:'LEATHER GLOVES GREEN',name_ko:'그린 레더 글러브',  price:89000,  images:['/assets/products/leather-gloves-green.jpeg'],category:'accessories', is_available:1, stock:20 },
-  { id:4, name:'HAIR CLIP SET',        name_ko:'헤어 클립 세트',   price:45000,  images:['/assets/products/hair-clip-set.png'],        category:'accessories', is_available:1, stock:30 },
-  { id:5, name:'EDITORIAL LOOK 01',   name_ko:'에디토리얼 룩 01', price:550000, images:['/assets/products/editorial-look-01.jpeg'],  category:'etc',         is_available:1, stock:3  },
-  { id:6, name:'GUIDE BOOK',           name_ko:'지구인 가이드',    price:0,      images:['/assets/products/guide-book.png'],           category:'etc',         is_available:0, stock:0  },
+  { id:1, name:'SATIN BLOUSE SET',    name_ko:'새틴 블라우스 세트', price:298000, images:['/assets/products/satin-blouse-set.jpeg'],  detail_images:[], sizes:['XS','S','M','L','XL'], category:'tops',        is_available:1, stock:10 },
+  { id:2, name:'TRACK JACKET MINT',   name_ko:'트랙 재킷 민트',    price:198000, images:['/assets/products/track-jacket-mint.jpeg'],  detail_images:[], sizes:['XS','S','M','L','XL'], category:'outerwear',   is_available:1, stock:5  },
+  { id:3, name:'LEATHER GLOVES GREEN',name_ko:'그린 레더 글러브',  price:89000,  images:['/assets/products/leather-gloves-green.jpeg'],detail_images:[], sizes:['FREE'],               category:'accessories', is_available:1, stock:20 },
+  { id:4, name:'HAIR CLIP SET',        name_ko:'헤어 클립 세트',   price:45000,  images:['/assets/products/hair-clip-set.png'],        detail_images:[], sizes:['FREE'],               category:'accessories', is_available:1, stock:30 },
+  { id:5, name:'EDITORIAL LOOK 01',   name_ko:'에디토리얼 룩 01', price:550000, images:['/assets/products/editorial-look-01.jpeg'],  detail_images:[], sizes:['XS','S','M','L','XL'], category:'etc',         is_available:1, stock:3  },
+  { id:6, name:'GUIDE BOOK',           name_ko:'지구인 가이드',    price:0,      images:['/assets/products/guide-book.png'],           detail_images:[], sizes:null,                    category:'etc',         is_available:0, stock:0  },
 ];
 
 // DB 없이 로컬 관리: admin-local.html이 localStorage의 'aniaLocalProducts'에 저장
@@ -90,7 +90,7 @@ const SEASONS = (function () {
 //   - 서버(/api/upload.php) 업로드 우선 시도
 //   - admin 세션 없거나 서버 오류 시 → base64 DataURL로 자동 폴백
 const _UPLOAD_ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const _UPLOAD_MAX     = 10 * 1024 * 1024;  // 10 MB
+const _UPLOAD_MAX     = 20 * 1024 * 1024;  // 20 MB
 const _BASE64_WARN    = 800 * 1024;         // 800 KB: localStorage 압박 경고 기준
 
 async function uploadImage(file) {
