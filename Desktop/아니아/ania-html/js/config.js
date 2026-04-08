@@ -90,7 +90,7 @@ const SEASONS = (function () {
 //   - 서버(/api/upload.php) 업로드 우선 시도
 //   - admin 세션 없거나 서버 오류 시 → base64 DataURL로 자동 폴백
 const _UPLOAD_ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const _UPLOAD_MAX     = 20 * 1024 * 1024;  // 20 MB
+const _UPLOAD_MAX     = 50 * 1024 * 1024;  // 50 MB
 const _BASE64_WARN    = 800 * 1024;         // 800 KB: localStorage 압박 경고 기준
 
 async function uploadImage(file) {

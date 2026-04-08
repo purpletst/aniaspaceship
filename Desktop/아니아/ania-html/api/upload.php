@@ -12,7 +12,7 @@ $allowed  = ['image/jpeg','image/png','image/webp','image/gif'];
 $mime     = mime_content_type($file['tmp_name']);
 
 if (!in_array($mime, $allowed)) json_err('이미지 파일만 업로드 가능합니다.');
-if ($file['size'] > 20 * 1024 * 1024) json_err('파일 크기는 20MB 이하여야 합니다.');
+if ($file['size'] > 50 * 1024 * 1024) json_err('파일 크기는 50MB 이하여야 합니다.');
 
 $ext   = match($mime) { 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', default => 'gif' };
 $name  = bin2hex(random_bytes(16)) . '.' . $ext;
