@@ -86,8 +86,12 @@
         </select>
       </div>
       <div class="modal-field full-width">
-        <label>이미지 URL (쉼표로 구분)</label>
-        <input id="f-images" placeholder="/assets/products/example.jpg">
+        <label>이미지</label>
+        <div id="img-grid" class="img-grid"></div>
+        <input type="file" id="img-file-input"
+          accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+        <button type="button" id="img-add-btn" class="btn-img-add">+ 이미지 추가</button>
+        <p id="img-upload-msg" style="font-size:11px;color:#888;margin-top:4px"></p>
       </div>
       <div class="modal-field full-width">
         <label>상품 설명</label>
@@ -105,6 +109,42 @@
 <script>
 const CATS = { tops:'TOPS', outerwear:'OUTERWEAR', bottoms:'BOTTOMS', dresses:'DRESSES', accessories:'ACCESSORIES', etc:'ETC' };
 let editingIdx = null;
+let modalImages = [];
+
+function renderImgGrid() {
+  const grid = document.getElementById('img-grid');
+  if (!modalImages.length) {
+    grid.innerHTML = '<p style="font-size:11px;color:#aaa;padding:8px 0">이미지 없음</p>';
+    return;
+  }
+  grid.innerHTML = modalImages.map((url, i) => `
+    <div class="img-thumb-wrap">
+      <img src="${url}" alt="" onerror="this.style.display='none'">
+      <button type="button" class="img-thumb-del" data-i="${i}">✕</button>
+    </div>`).join('');
+  grid.querySelectorAll('.img-thumb-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      modalImages.splice(Number(btn.dataset.i), 1);
+      renderImgGrid();
+    });
+  });
+}
+
+document.getElementById('img-add-btn').addEventListener('click', () => {
+  document.getElementById('img-file-input').click();
+});
+document.getElementById('img-file-input').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+  const msgEl = document.getElementById('img-upload-msg');
+  msgEl.textContent = '업로드 중...';
+  this.value = '';
+  const result = await uploadImage(file);
+  if (!result.ok) { msgEl.textContent = result.error; return; }
+  msgEl.textContent = result.warning || (result.source === 'server' ? '서버 업로드 완료' : '로컬 저장 (base64)');
+  modalImages.push(result.url);
+  renderImgGrid();
+});
 
 function load() {
   try { return JSON.parse(localStorage.getItem('aniaLocalProducts') || '[]'); }
@@ -174,16 +214,19 @@ function openModal(idx = null) {
     document.getElementById('f-stock').value   = p.stock;
     document.getElementById('f-avail').value   = p.is_available ? '1' : '0';
     const imgs = Array.isArray(p.images) ? p.images : (p.images ? JSON.parse(p.images) : []);
-    document.getElementById('f-images').value  = imgs.join(', ');
+    modalImages = [...imgs];
     document.getElementById('f-desc').value    = p.description || '';
   } else {
     document.getElementById('modal-title').textContent = '상품 추가';
-    ['f-name','f-name-ko','f-price','f-stock','f-images','f-desc'].forEach(id => {
+    ['f-name','f-name-ko','f-price','f-stock','f-desc'].forEach(id => {
       document.getElementById(id).value = '';
     });
     document.getElementById('f-cat').value   = 'tops';
     document.getElementById('f-avail').value = '1';
+    modalImages = [];
   }
+  document.getElementById('img-upload-msg').textContent = '';
+  renderImgGrid();
   modal.style.display = 'flex';
 }
 
@@ -198,8 +241,7 @@ document.getElementById('modal-save').addEventListener('click', () => {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('상품명을 입력하세요.'); return; }
 
-  const images = document.getElementById('f-images').value
-    .split(',').map(s => s.trim()).filter(Boolean);
+  const images = [...modalImages];
 
   const item = {
     name,

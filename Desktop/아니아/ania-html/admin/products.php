@@ -97,8 +97,10 @@ tr:hover td { background: #fafafa; }
 .submit-btn:hover { background: #333; }
 .new-btn { display: inline-block; padding: 8px 16px; background: #fff; border: 1px solid #000; font-size: 11px; text-decoration: none; margin-bottom: 16px; }
 .new-btn:hover { background: #000; color: #fff; }
-.img-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-.img-preview img { width: 60px; height: 60px; object-fit: cover; border: 1px solid #ddd; }
+.prod-img-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.prod-thumb-wrap { position: relative; }
+.prod-thumb-wrap img { width: 64px; height: 64px; object-fit: cover; border: 1px solid #ddd; }
+.prod-thumb-wrap button { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; background: #c00; color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; line-height: 18px; text-align: center; padding: 0; }
 </style>
 </head>
 <body>
@@ -187,27 +189,20 @@ tr:hover td { background: #fafafa; }
           <textarea name="description"><?= htmlspecialchars($editProduct['description'] ?? '') ?></textarea>
         </div>
         <div class="form-field">
-          <label>이미지 URL (줄바꿈으로 구분)</label>
           <?php
             $imgs = [];
             if (!empty($editProduct['images'])) {
                 $imgs = json_decode($editProduct['images'], true) ?: [];
             }
           ?>
-          <textarea name="images" id="images-ta"><?= htmlspecialchars(implode("\n", $imgs)) ?></textarea>
-          <div class="img-preview" id="img-preview">
-            <?php foreach ($imgs as $img): ?>
-              <img src="<?= htmlspecialchars($img) ?>" onerror="this.style.display='none'">
-            <?php endforeach; ?>
-          </div>
-        </div>
-
-        <!-- 이미지 업로드 -->
-        <div class="form-field">
-          <label>이미지 파일 업로드</label>
-          <input type="file" name="upload_file" accept="image/*" id="upload-file">
-          <button type="button" class="btn btn-edit" style="margin-top:6px;width:100%" onclick="uploadImage()">업로드</button>
+          <label>이미지</label>
+          <div id="img-grid" class="prod-img-grid"></div>
+          <input type="file" id="upload-file"
+            accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+          <button type="button" onclick="triggerUpload()" class="btn btn-edit"
+            style="margin-top:4px">+ 이미지 추가</button>
           <p id="upload-msg" style="font-size:11px;color:#888;margin-top:4px"></p>
+          <textarea name="images" id="images-ta" style="display:none"></textarea>
         </div>
 
         <button type="submit" class="submit-btn"><?= $editProduct ? '수정 저장' : '등록하기' ?></button>
@@ -217,30 +212,51 @@ tr:hover td { background: #fafafa; }
 </div>
 
 <script>
-async function uploadImage() {
-  const file = document.getElementById('upload-file').files[0];
-  if (!file) { alert('파일을 선택해주세요.'); return; }
-  const fd = new FormData();
-  fd.append('file', file);
+let prodImages = <?= json_encode($imgs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+
+function renderProdGrid() {
+  const grid = document.getElementById('img-grid');
+  grid.innerHTML = prodImages.map((url, i) => `
+    <div class="prod-thumb-wrap">
+      <img src="${url}" onerror="this.style.display='none'">
+      <button type="button" onclick="removeProdImg(${i})">✕</button>
+    </div>`).join('') || '<p style="font-size:11px;color:#aaa">이미지 없음</p>';
+  document.getElementById('images-ta').value = prodImages.join('\n');
+}
+
+function removeProdImg(i) {
+  prodImages.splice(i, 1);
+  renderProdGrid();
+}
+
+function triggerUpload() {
+  document.getElementById('upload-file').click();
+}
+
+document.getElementById('upload-file').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
   const msg = document.getElementById('upload-msg');
   msg.textContent = '업로드 중...';
-  const res = await fetch('/api/upload.php', { method: 'POST', body: fd, credentials: 'same-origin' });
-  const json = await res.json();
-  if (json.ok) {
-    const ta = document.getElementById('images-ta');
-    ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + json.data.url;
-    msg.textContent = '업로드 완료: ' + json.data.url;
-    // 미리보기 추가
-    const preview = document.getElementById('img-preview');
-    const img = document.createElement('img');
-    img.src = json.data.url;
-    img.style.cssText = 'width:60px;height:60px;object-fit:cover;border:1px solid #ddd';
-    img.onerror = () => img.style.display = 'none';
-    preview.appendChild(img);
-  } else {
+  this.value = '';
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res = await fetch('/api/upload.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+    const json = await res.json();
+    if (json.ok) {
+      prodImages.push(json.data.url);
+      renderProdGrid();
+      msg.textContent = '완료: ' + json.data.url;
+      return;
+    }
     msg.textContent = '오류: ' + (json.error || '업로드 실패');
+  } catch (_) {
+    msg.textContent = '업로드 실패 — 관리자 로그인 상태인지 확인하세요.';
   }
-}
+});
+
+renderProdGrid();
 </script>
 </body>
 </html>

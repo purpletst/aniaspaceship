@@ -9,7 +9,7 @@ const SITE = {
   season: '26 F/W',
   // ✏️ 사업자 정보 — 푸터/개인정보방침/약관에 공통 사용
   info: {
-    ceo:        '박지환',
+    ceo:        '강민서',
     license:    '501-04-31493',
     online_reg: '',   // 통신판매업신고번호 — 신고 후 입력
     address:    '서울특별시 서대문구 가재울미래로 2, 281호/201호',
@@ -29,9 +29,9 @@ const SITE = {
     shopSubs: [
       { label: 'ALL',         href: '/shop.html' },
       { label: 'OUTERWEAR',   href: '/shop.html?category=outerwear' },
-      { label: 'TOPS',        href: '/shop.html?category=tops' },
-      { label: 'BOTTOMS',     href: '/shop.html?category=bottoms' },
-      { label: 'DRESSES',     href: '/shop.html?category=dresses' },
+      { label: 'TOP',        href: '/shop.html?category=top' },
+      { label: 'BOTTOM',     href: '/shop.html?category=bottom' },
+      { label: 'DRESS',     href: '/shop.html?category=dress' },
       { label: 'ACCESSORIES', href: '/shop.html?category=accessories' },
     ],
   },
@@ -83,6 +83,50 @@ const SEASONS = (function () {
     });
   } catch { return _DEFAULT_SEASONS; }
 })();
+
+// ── 이미지 업로드 유틸리티 ────────────────────────────────
+// 사용: const result = await uploadImage(file);
+// 반환: { ok, url, source: 'server'|'base64', warning? }
+//   - 서버(/api/upload.php) 업로드 우선 시도
+//   - admin 세션 없거나 서버 오류 시 → base64 DataURL로 자동 폴백
+const _UPLOAD_ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const _UPLOAD_MAX     = 10 * 1024 * 1024;  // 10 MB
+const _BASE64_WARN    = 800 * 1024;         // 800 KB: localStorage 압박 경고 기준
+
+async function uploadImage(file) {
+  if (!file) return { ok: false, error: '파일이 없습니다.' };
+  if (!_UPLOAD_ALLOWED.includes(file.type)) {
+    return { ok: false, error: 'JPEG / PNG / WEBP / GIF 이미지만 업로드 가능합니다.' };
+  }
+  if (file.size > _UPLOAD_MAX) {
+    return { ok: false, error: `파일 크기는 10MB 이하여야 합니다. (현재 ${(file.size / 1024 / 1024).toFixed(1)}MB)` };
+  }
+
+  // 1차: 서버 업로드 시도 (/api/upload.php — admin 세션 필요)
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(`${API}/upload.php`, { method: 'POST', credentials: 'same-origin', body: fd });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.ok) return { ok: true, url: json.data.url, source: 'server' };
+    }
+  } catch (_) { /* 네트워크 오류 → 폴백 */ }
+
+  // 2차: base64 DataURL 폴백 (로컬/오프라인 상태, admin 미로그인)
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const url = e.target.result;
+      const warning = file.size > _BASE64_WARN
+        ? `이미지가 브라우저 로컬에만 저장됩니다 (${(file.size / 1024).toFixed(0)}KB). 용량이 클수록 localStorage 한도를 초과할 위험이 있습니다.`
+        : null;
+      resolve({ ok: true, url, source: 'base64', warning });
+    };
+    reader.onerror = () => resolve({ ok: false, error: '파일 읽기에 실패했습니다.' });
+    reader.readAsDataURL(file);
+  });
+}
 
 function fmtPrice(n) {
   return Number(n).toLocaleString('ko-KR') + '원';

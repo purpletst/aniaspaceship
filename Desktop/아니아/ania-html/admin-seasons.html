@@ -48,6 +48,16 @@
   textarea.export-ta { height: 120px; font-size: 11px; font-family: monospace; background: #f9f9f9; }
   .divider { border: none; border-top: 1px solid #e0e0e0; margin: 32px 0; }
   .empty { font-size: 13px; color: #aaa; padding: 16px 0; text-align: center; }
+  .photo-drop-zone {
+    border: 2px dashed #ccc; border-radius: 4px; padding: 28px;
+    text-align: center; cursor: pointer; font-size: 12px; color: #888;
+    margin-top: 8px; transition: border-color .2s, background .2s;
+  }
+  .photo-drop-zone:hover, .photo-drop-zone.drag-over {
+    border-color: #222; background: #f0f0f0; color: #222;
+  }
+  .photo-drop-zone small { display: block; font-size: 10px; color: #aaa; margin-top: 4px; }
+  .photo-preview-wrap { display: none; margin-top: 12px; align-items: center; gap: 12px; }
 </style>
 </head>
 <body>
@@ -105,8 +115,17 @@
     <!-- 사진 추가 에디터 -->
     <div class="editor" id="add-photo-editor">
       <h2 style="margin-bottom:16px">사진 추가</h2>
-      <label>이미지 URL</label>
-      <input type="text" id="new-photo-url" placeholder="/assets/uploads/photo.jpg 또는 외부 URL">
+      <div class="photo-drop-zone" id="photo-drop-zone">
+        <p>클릭하거나 이미지를 여기에 드래그하세요</p>
+        <small>JPEG / PNG / WEBP / GIF · 최대 10MB</small>
+      </div>
+      <input type="file" id="photo-file-input"
+        accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+      <div class="photo-preview-wrap" id="photo-preview-wrap">
+        <img id="photo-preview-img" style="max-height:120px;max-width:200px;object-fit:contain;border:1px solid #e0e0e0">
+        <button type="button" class="btn btn-outline btn-sm" onclick="clearPhotoSelection()">✕ 다시 선택</button>
+      </div>
+      <p id="photo-upload-status" style="font-size:11px;color:#888;margin-top:6px"></p>
       <label>캡션 (선택)</label>
       <input type="text" id="new-photo-caption" placeholder="사진 설명 (선택사항)">
       <div class="actions" style="margin-top:16px">
@@ -140,10 +159,11 @@
   </div>
 </div>
 
+<script src="/js/config.js"></script>
 <script>
 const LS_KEY = 'aniaLocalSeasons';
 
-const _DEFAULT_SEASONS = [
+const _LOCAL_DEFAULT_SEASONS = [
   {
     slug: '26fw',
     label: '26 F/W',
@@ -156,8 +176,8 @@ const _DEFAULT_SEASONS = [
 function load() {
   try {
     const d = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-    return d.length ? d : JSON.parse(JSON.stringify(_DEFAULT_SEASONS));
-  } catch { return JSON.parse(JSON.stringify(_DEFAULT_SEASONS)); }
+    return d.length ? d : JSON.parse(JSON.stringify(_LOCAL_DEFAULT_SEASONS));
+  } catch { return JSON.parse(JSON.stringify(_LOCAL_DEFAULT_SEASONS)); }
 }
 
 function save(data) {
@@ -273,31 +293,73 @@ function deleteSeason(i) {
 }
 
 // ── 사진 추가 ──
+let pendingPhotoUrl = null;
+
 function openAddPhoto() {
   document.getElementById('add-photo-editor').classList.add('open');
 }
+function clearPhotoSelection() {
+  pendingPhotoUrl = null;
+  document.getElementById('photo-file-input').value = '';
+  document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.getElementById('photo-preview-img').src = '';
+  document.getElementById('photo-upload-status').textContent = '';
+}
 function closeAddPhoto() {
   document.getElementById('add-photo-editor').classList.remove('open');
-  document.getElementById('new-photo-url').value = '';
+  clearPhotoSelection();
   document.getElementById('new-photo-caption').value = '';
 }
+async function handlePhotoFile(file) {
+  const status = document.getElementById('photo-upload-status');
+  const preview = document.getElementById('photo-preview-wrap');
+  status.textContent = '업로드 중...';
+  pendingPhotoUrl = null;
+  const result = await uploadImage(file);
+  if (!result.ok) {
+    status.textContent = result.error;
+    return;
+  }
+  pendingPhotoUrl = result.url;
+  document.getElementById('photo-preview-img').src = result.url;
+  preview.style.display = 'flex';
+  status.textContent = result.warning || (result.source === 'server' ? '서버 업로드 완료' : '로컬 저장 (base64)');
+}
 function addPhoto() {
-  const url     = document.getElementById('new-photo-url').value.trim();
   const caption = document.getElementById('new-photo-caption').value.trim();
   const msg     = document.getElementById('add-photo-msg');
 
-  if (!url) { showMsg(msg, 'URL을 입력하세요.', 'err'); return; }
+  if (!pendingPhotoUrl) { showMsg(msg, '이미지를 선택하세요.', 'err'); return; }
 
   const s = seasons.find(s => s.slug === activeSlug);
   if (!s) return;
   if (!s.photos) s.photos = [];
-  s.photos.push({ url, caption });
+  s.photos.push({ url: pendingPhotoUrl, caption });
   save(seasons);
   renderPhotoList(s);
   closeAddPhoto();
   showMsg(msg, '추가되었습니다.', 'ok');
   renderSeasonList();
 }
+
+// ── 사진 업로드 이벤트 ──
+document.addEventListener('DOMContentLoaded', () => {
+  const dropZone  = document.getElementById('photo-drop-zone');
+  const fileInput = document.getElementById('photo-file-input');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handlePhotoFile(file);
+  });
+  fileInput.addEventListener('change', function() {
+    if (this.files[0]) handlePhotoFile(this.files[0]);
+  });
+});
 
 // ── 사진 순서 변경 ──
 function movePhoto(i, dir) {
@@ -326,7 +388,7 @@ function deletePhoto(i) {
 function resetToDefault() {
   if (!confirm('모든 시즌 데이터를 기본값으로 초기화합니다. 계속하시겠습니까?')) return;
   localStorage.removeItem(LS_KEY);
-  seasons = JSON.parse(JSON.stringify(_DEFAULT_SEASONS));
+  seasons = JSON.parse(JSON.stringify(_LOCAL_DEFAULT_SEASONS));
   activeSlug = null;
   document.getElementById('photo-card').style.display = 'none';
   renderSeasonList();
